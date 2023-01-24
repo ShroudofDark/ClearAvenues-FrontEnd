@@ -7,6 +7,7 @@ Issue Tracking and Sprint Planning is found in Github Projects
 2. Click on the 411 board
 
 ### Gantt Chart View
+(Gantt Viewer Source)[https://github.com/ganttlab/ganttlab]
 1. Go to https://app.ganttlab.com/ 
 2. Click "sign in with GitHub"
 3. paste this access token:
