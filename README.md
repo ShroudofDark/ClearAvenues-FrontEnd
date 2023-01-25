@@ -35,4 +35,3 @@ Issue Tracking and Sprint Planning is found in Github Projects
 ## Matthew Wilson
 - Github: mwils031
 - Email: mwils031@odu.edu
-
