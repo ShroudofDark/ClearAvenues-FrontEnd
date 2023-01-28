@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:clear_avenues/widgets/login_form_field.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(fontSize: 20),
             ),
           ),
-          // Then we have 2 login form fields (our own custom widget in widgets/ folder
+          // Then we have 2 login form fields (our own custom widget in widgets/ folder)
           const LoginFormField(
               errorText: "Please Enter Your Username/Email",
               label: "Username/Email"),
@@ -62,19 +63,21 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onLoginPressed() {
     // Validates that the current form is valid
     if (_formKey.currentState!.validate()) {
+
       // Displays a message on bottom of screen that we're logging in
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Logging in")));
     }
+
+    // Add login logic here
+
+
+
+
+    //
   }
 
   void _onRegisterPressed() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-              title: Text(
-                  "You should be on the register screen when this is pressed"));
-        });
+    context.go('/register');
   }
 }

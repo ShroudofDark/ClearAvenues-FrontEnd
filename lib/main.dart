@@ -1,19 +1,26 @@
 import 'package:clear_avenues/screens/google_maps_screen.dart';
+import 'package:clear_avenues/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/report_screen.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  final _router = GoRouter(
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => const MyHomePage(title: "Clear Avenues")),
+        GoRoute(path: 'register', builder: (context, state) => const RegisterScreen())
+      ]);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -21,7 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
 
       ),
-      home: const MyHomePage(title: 'Clear Avenues Mockup Design'),
+      routerConfig: _router,
     );
   }
 }
