@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:clear_avenues/widgets/my_scaffold.dart';
 
 class ViewHistory extends StatefulWidget {
   const ViewHistory({Key? key}) : super(key: key);
@@ -12,10 +13,7 @@ class _ViewHistoryState extends State<ViewHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Clear Avenues'),
-        ),
+    return MyScaffold(
         body:
         Column(
             mainAxisAlignment: MainAxisAlignment.start,
