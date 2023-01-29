@@ -23,9 +23,6 @@ class DevScreen extends StatelessWidget {
           ElevatedButton(
               onPressed: () => context.push('/view_history'),
               child: const Text('View History'))
-          //ElevatedButton(
-          //  onPressed: () => context.push('view_history'),
-          //child: ViewHistory())
         ],
       ),
     ));
