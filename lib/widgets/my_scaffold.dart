@@ -12,6 +12,9 @@ class MyScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: NavBar(),
+        //Edits where you can start a drag motion to open the side bar
+        //Currently entire size of screen due to finicky behavior where it closes app
+        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
       appBar: AppBar(
         title: const Text("Clear Avenues"),
       ),
