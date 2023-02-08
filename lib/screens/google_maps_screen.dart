@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:clear_avenues/widgets/navigation_bar.dart';
 
 //-----------PLEASE READ----------------//
 //-------------------------------------//
@@ -22,6 +23,10 @@ class _SimpleMapState extends State<SimpleMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavBar(),
+      //Edits where you can start a drag motion to open the side bar
+      //Currently entire size of screen due to finicky behavior where it closes app
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width,
       appBar: AppBar(
         title: const Text('Map View'),
       ),

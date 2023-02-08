@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 /* Navigation bar is toolbar that expands from the left screen
  * and provides navigation options for the user in order to access
  * different screens.
