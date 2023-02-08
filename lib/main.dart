@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
     GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
     GoRoute(path: '/view_history', builder: (context, state) => const ViewHistory()),
     GoRoute(path: '/report', builder: (context, state) => const ReportScreen()),
+    GoRoute(path: '/map', builder: (context, state) => const SimpleMap())
+
 
   ]);
 
