@@ -28,9 +28,12 @@ class SettingScreenState extends State<SettingScreen> {
     return Scaffold(
 
         appBar: AppBar(
+          backgroundColor: Colors.green,
+
           title: const Text('Setting'),
         ),
         body: ListView(
+
             children:  <Widget> [
               //general section
               const ExpansionTile (
@@ -78,7 +81,8 @@ class SettingScreenState extends State<SettingScreen> {
                               onPressed: () {
 
                                 Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                  MaterialPageRoute(builder:
+                                      (context) => const LoginScreen()),
 
                                 );
                               }
@@ -87,9 +91,35 @@ class SettingScreenState extends State<SettingScreen> {
                         }
                     )
                   ]
+              ),
+              const ExpansionTile (
+                  title: Text("Helo"),
+                  children:<Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("This section provides information and resources"
+                          "to help you use the app."),
+
+                    )
+                  ]
+              ),
+              const ExpansionTile (
+                title: Text("Report Bug"),
+                  children:<Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("Report bug is a feature in the application"
+                          "that allows the users to report any issue."),
+
+                    )
+                  ]
+
               )
-            ]
+            ],
+
+
         )
     );
   }
 }
+
