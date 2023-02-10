@@ -27,3 +27,4 @@ jobs:
           token: ${{ secrets.TOKEN }}
           allowUpdates: true
           replacesArtifacts: true
+          makeLatest: true
