@@ -25,7 +25,10 @@ class DevScreen extends StatelessWidget {
               child: const Text('View History')),
           ElevatedButton(
               onPressed: () => context.push('/map'),
-              child: const Text('Map Screen'))
+              child: const Text('Map Screen')),
+          ElevatedButton(
+              onPressed: () => context.push('/setting'),
+              child: const Text('Setting Screen'))
         ],
       ),
     ));
