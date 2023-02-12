@@ -1,7 +1,10 @@
+import 'package:clear_avenues/screens/analysis_screen.dart';
 import 'package:clear_avenues/screens/google_maps_screen.dart';
+import 'package:clear_avenues/screens/notification_screen.dart';
 import 'package:clear_avenues/screens/register_screen.dart';
 import 'package:clear_avenues/screens/view_history.dart';
 import 'package:clear_avenues/screens/setting_screen.dart';
+import 'package:clear_avenues/screens/view_organization.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/report_screen.dart';
@@ -22,8 +25,10 @@ class MyApp extends StatelessWidget {
     GoRoute(path: '/view_history', builder: (context, state) => const ViewHistory()),
     GoRoute(path: '/report', builder: (context, state) => const ReportScreen()),
     GoRoute(path: '/map', builder: (context, state) => const SimpleMap()),
-    GoRoute(path: '/setting', builder: (context, state) => const SettingScreen())
-
+    GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
+    GoRoute(path: '/view_organization', builder: (context, state) => const ViewOrganization()),
+    GoRoute(path: '/analysis', builder: (context, state) => const AnalysisScreen()),
+    GoRoute(path: '/notification', builder: (context, state) => const NotificationScreen())
 
   ]);
 
