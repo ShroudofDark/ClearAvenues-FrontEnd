@@ -1,5 +1,8 @@
+import 'package:clear_avenues/screens/about_screen.dart';
 import 'package:clear_avenues/screens/analysis_screen.dart';
+import 'package:clear_avenues/screens/bug_screen.dart';
 import 'package:clear_avenues/screens/google_maps_screen.dart';
+import 'package:clear_avenues/screens/help_screen.dart';
 import 'package:clear_avenues/screens/notification_screen.dart';
 import 'package:clear_avenues/screens/register_screen.dart';
 import 'package:clear_avenues/screens/view_history.dart';
@@ -28,8 +31,10 @@ class MyApp extends StatelessWidget {
     GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
     GoRoute(path: '/view_organization', builder: (context, state) => const ViewOrganization()),
     GoRoute(path: '/analysis', builder: (context, state) => const AnalysisScreen()),
-    GoRoute(path: '/notification', builder: (context, state) => const NotificationScreen())
-
+    GoRoute(path: '/notification', builder: (context, state) => const NotificationScreen()),
+    GoRoute(path: '/help', builder: (context, state) => const HelpScreen()),
+    GoRoute(path: '/bug_report', builder: (context, state) => const BugReportScreen()),
+    GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
   ]);
 
 

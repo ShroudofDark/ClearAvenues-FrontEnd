@@ -99,21 +99,21 @@ class NavBar extends StatelessWidget {
               ),
               //Navigation Points - Simple Style
 
-              createListTile('/view_history','Notifications', Icons.notifications),
+              createListTile('/notification_screen','Notifications', Icons.notifications),
               createListTile('/view_history','History', Icons.history),
-              createListTile('/view_history','Organization', Icons.business),
-              createListTile('/view_history','Analysis', Icons.analytics), //TODO only certain account types see this options
+              createListTile('/view_organization','Organization', Icons.business),
+              createListTile('/analysis','Analysis', Icons.analytics),
 
               separator(),
 
               createListTile('/login','Account', Icons.person), //TODO different screen depending on login status
-              createListTile('/view_history','Settings', Icons.settings),
+              createListTile('/setting','Settings', Icons.settings),
 
               separator(),
 
-              createListTile('/view_history','Help', Icons.question_mark_rounded),
-              createListTile('/view_history','About', Icons.info_outline_rounded),
-              createListTile('/view_history','Bug Report', Icons.bug_report),
+              createListTile('/help','Help', Icons.question_mark_rounded),
+              createListTile('/about','About', Icons.info_outline_rounded),
+              createListTile('/bug_report','Bug Report', Icons.bug_report),
 
             ],
           )
