@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:clear_avenues/widgets/navigation_bar.dart';
 
 
@@ -58,15 +59,32 @@ class _SimpleMapState extends State<SimpleMap> {
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.05,
       appBar: AppBar(
         title: const Text('Map View'),
+        //Hide hamburger icon
+        automaticallyImplyLeading: false,
       ),
       body: GoogleMap(
-        mapType: MapType.hybrid,
+        mapType: MapType.normal,
         initialCameraPosition: _kInitialPosition,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
         markers: Set.from(markers),
       ),
+      /**
+       * Button Location to submit a report. When selected the button
+       * is to open the report screen and transfer user to that screen.
+       */
+      floatingActionButton: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.05,
+        child: FloatingActionButton.extended(
+          icon: const Icon(Icons.report),
+          label: const Text('Report Unsafe Condition'),
+          onPressed: () => {
+            context.push('/report'),
+          },
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

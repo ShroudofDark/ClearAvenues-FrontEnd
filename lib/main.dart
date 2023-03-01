@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // This is the theme of your application.
         // You can add/adjust other parameters to modify it to your liking
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
 
       ),
       routerConfig: _router

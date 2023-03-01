@@ -99,7 +99,7 @@ class NavBar extends StatelessWidget {
               ),
               //Navigation Points - Simple Style
 
-              createListTile('/notification_screen','Notifications', Icons.notifications),
+              createListTile('/notification','Notifications', Icons.notifications),
               createListTile('/view_history','History', Icons.history),
               createListTile('/view_organization','Organization', Icons.business),
               createListTile('/analysis','Analysis', Icons.analytics),
