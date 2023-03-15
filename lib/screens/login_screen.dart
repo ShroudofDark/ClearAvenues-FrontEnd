@@ -31,14 +31,23 @@ class _LoginScreenState extends State<LoginScreen> {
           // This column has multiple children...
           children: <Widget>[
             // Clear Avenues Title Text wrapped in a container to add padding
-            Container(
+            /*Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
               child: const Text(
                 'Clear Avenues',
                 style: TextStyle(fontSize: 30),
               ),
-            ),
+            ),*/
+             const SizedBox(height: 16.0),
+             Container(
+               alignment: Alignment.center,
+                child: Image.asset(
+                'assets/images/ClearAveLogo.png',
+                  width:300.0,
+                  height:300.0,
+             ),
+             ),
             // Same as above, but for Sign In
             Container(
               alignment: Alignment.center,
