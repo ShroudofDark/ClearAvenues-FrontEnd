@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:clear_avenues/widgets/login_form_field.dart';
+import 'package:clear_avenues/utility/http_assist.dart';
 import 'package:go_router/go_router.dart';
+
 
 import '../widgets/my_scaffold.dart';
 
@@ -13,6 +15,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // Add login logic here
 
 
-
-
-    //
+    //Test code (hitting login makes this appear)
+    testGet();
   }
 
   void _onRegisterPressed() {
