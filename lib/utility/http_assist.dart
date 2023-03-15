@@ -34,8 +34,17 @@ Future<void> testGet() async {
   print('Body: ${response.body}');
 }
 
-Future<void> loginAuthenticaiton() async {
+Future<bool> loginAuthenticaiton(String email, String password) async {
+  var url = Uri.parse('http://$appIP/userLogin?email_address=$email&password=$password');
+  var response = await get(url);
 
+  //Currently authentication returns a true if there is a match
+  if(response.body == "true") {
+    return Future<bool>.value(true);
+  }
+
+  //Handles basically all error codes, but at the moment on a failed match it returns error code 500
+  return Future<bool>.value(false);
 }
 
 Future<void> registerNewUser(String name, String email, String password) async {
@@ -45,7 +54,6 @@ Future<void> registerNewUser(String name, String email, String password) async {
   //TODO In future this should likely be a POST or equivalent
   Response response = await get(url);
 
-  //Debug text
   print('Status code: ${response.statusCode}');
   print('Headers: ${response.headers}');
   print('Body: ${response.body}');
