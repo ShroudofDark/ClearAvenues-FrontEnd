@@ -1,8 +1,10 @@
 import 'package:clear_avenues/widgets/my_scaffold.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({Key? key}) : super(key: key);
+  const ReportScreen({Key? key, required this.passed_location}) : super(key: key);
+  final LatLng passed_location;
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
@@ -17,6 +19,12 @@ class _ReportScreenState extends State<ReportScreen> {
   ];
   String dropdownValue = options.first;
 
+  final TextEditingController _controller = TextEditingController();
+
+  // static LatLng loc = LatLng(1.0,1.0);
+  // static LatLng? loc = passed_location;
+  // static String s = "${loc?.longitude} ${loc?.latitude}";
+
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
@@ -26,10 +34,11 @@ class _ReportScreenState extends State<ReportScreen> {
           children: <Widget>[
             Stack(
               children: [
-                Image.asset("assets/gmaps_placeholder.webp"),
-                const TextField(
-                  onSubmitted: null,
-                  decoration: InputDecoration(
+                Image.asset("assets/gmaps_placeholder.webp"), // TODO: replace image with map preview centered around selected area
+                TextField(
+                  controller: _controller..text = "${widget.passed_location?.longitude} ${widget.passed_location?.latitude}",
+                    onSubmitted: null,
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       label: Text("Enter a location"),
                       filled: true,

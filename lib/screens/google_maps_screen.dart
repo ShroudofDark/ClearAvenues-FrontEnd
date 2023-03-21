@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clear_avenues/screens/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -67,9 +68,13 @@ class _SimpleMapState extends State<SimpleMap> {
         initialCameraPosition: _kInitialPosition,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
-        },
+        },onTap: (tap_latLng) {
+          // print('${latLng.latitude}, ${latLng.longitude}'); // prints lng and lat
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReportScreen(passed_location: tap_latLng)));
+      },
         markers: Set.from(markers),
       ),
+
       /**
        * Button Location to submit a report. When selected the button
        * is to open the report screen and transfer user to that screen.

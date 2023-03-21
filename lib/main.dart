@@ -9,6 +9,7 @@ import 'package:clear_avenues/screens/view_history.dart';
 import 'package:clear_avenues/screens/setting_screen.dart';
 import 'package:clear_avenues/screens/view_organization.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'screens/login_screen.dart';
 import 'screens/report_screen.dart';
 import 'screens/dev_screen.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
     GoRoute(path: '/view_history', builder: (context, state) => const ViewHistory()),
-    GoRoute(path: '/report', builder: (context, state) => const ReportScreen()),
+    GoRoute(path: '/report', builder: (context, state) => const ReportScreen(passed_location: LatLng(0.0,0.0))), // report text default to 0.0,0.0 when not entering through map screen tap
     GoRoute(path: '/map', builder: (context, state) => const SimpleMap()),
     GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
     GoRoute(path: '/view_organization', builder: (context, state) => const ViewOrganization()),
