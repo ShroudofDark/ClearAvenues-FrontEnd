@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
     GoRoute(path: '/view_history', builder: (context, state) => const ViewHistory()),
     GoRoute(path: '/report', builder: (context, state) => const ReportScreen(passed_location: LatLng(0.0,0.0))), // report text default to 0.0,0.0 when not entering through map screen tap
-    GoRoute(path: '/map', builder: (context, state) => const SimpleMap()),
+    GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
     GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
     GoRoute(path: '/view_organization', builder: (context, state) => const ViewOrganization()),
     GoRoute(path: '/analysis', builder: (context, state) => const AnalysisScreen()),
