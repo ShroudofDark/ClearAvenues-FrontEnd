@@ -17,8 +17,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-
-
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
@@ -39,15 +37,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(fontSize: 30),
               ),
             ),*/
-             const SizedBox(height: 16.0),
-             Container(
-               alignment: Alignment.center,
-                child: Image.asset(
+            const SizedBox(height: 16.0),
+            Container(
+              alignment: Alignment.center,
+              child: Image.asset(
                 'assets/images/ClearAveLogo.png',
-                  width:300.0,
-                  height:300.0,
-             ),
-             ),
+                width: 300.0,
+                height: 300.0,
+              ),
+            ),
             // Same as above, but for Sign In
             Container(
               alignment: Alignment.center,
@@ -89,11 +87,11 @@ class _LoginScreenState extends State<LoginScreen> {
           .showSnackBar(const SnackBar(content: Text("Logging in")));
 
       // Add login logic here
-      var success = await loginAuthenticaiton(emailController.text, passwordController.text);
-      if(success == true) {
+      var success = await loginAuthentication(
+          emailController.text, passwordController.text);
+      if (success == true && context.mounted) {
         context.push('/map');
-      }
-      else {
+      } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Unable to Login")));
       }

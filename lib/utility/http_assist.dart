@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 /* Example code - https://suragch.medium.com/how-to-make-http-requests-in-flutter-d12e98ee1cef
@@ -27,19 +28,34 @@ import 'package:http/http.dart';
 const appIP = '192.168.4.37:8080';
 
 Future<void> testGet() async {
-  var url = Uri.parse('http://$appIP/allUsers');
+  var url = Uri.parse('http://$appIP/users');
   var response = await get(url);
-  print('Status code: ${response.statusCode}');
-  print('Headers: ${response.headers}');
-  print('Body: ${response.body}');
+  if (kDebugMode) {
+    print('Status code: ${response.statusCode}');
+    print('Headers: ${response.headers}');
+    print('Body: ${response.body}');
+  }
 }
 
-Future<bool> loginAuthenticaiton(String email, String password) async {
-  var url = Uri.parse('http://$appIP/userLogin?email_address=$email&password=$password');
+Future<bool> loginAuthentication(String email, String password) async {
+  var url = Uri(
+    scheme: 'http',
+    host: appIP,
+    path: '/users/login',
+    queryParameters: {
+      'email': email,
+      'password': password,
+    },
+  );
+
+  /*
+  var url = Uri.parse(
+      'http://$appIP/users/login?email_address=$email&password=$password');
+  */
   var response = await get(url);
 
   //Currently authentication returns a true if there is a match
-  if(response.body == "true") {
+  if (response.body == "true") {
     return Future<bool>.value(true);
   }
 
@@ -50,11 +66,28 @@ Future<bool> loginAuthenticaiton(String email, String password) async {
 Future<void> registerNewUser(String name, String email, String password) async {
   //TODO: Pass in the type of account being registered for in future
   String accountType = "admin";
-  var url = Uri.parse('http://$appIP/newUser?email_address=$email&password=$password&display_name=$name&account_type=$accountType');
-  //TODO In future this should likely be a POST or equivalent
-  Response response = await get(url);
 
-  print('Status code: ${response.statusCode}');
-  print('Headers: ${response.headers}');
-  print('Body: ${response.body}');
+  // Neater way
+  var url = Uri(
+    scheme: 'http',
+    host: appIP,
+    path: '/users/new',
+    queryParameters: {
+      'email': email,
+      'password': password,
+      'display_name': name,
+      'account_type': accountType
+    },
+  );
+  // Old way
+  //var url = Uri.parse(
+  //    'http://$appIP/users/new?email_address=$email&password=$password&display_name=$name&account_type=$accountType');
+
+  Response response = await post(url);
+  // Only print if we're running in debug mode
+  if (kDebugMode) {
+    print('Status code: ${response.statusCode}');
+    print('Headers: ${response.headers}');
+    print('Body: ${response.body}');
+  }
 }
