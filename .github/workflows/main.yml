@@ -23,7 +23,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/flutter-apk/*.apk"
-          tag: 'alpha'
+          tag: 'alpha-${{github.ref}}'
           token: ${{ secrets.TOKEN }}
           allowUpdates: true
           replacesArtifacts: true
