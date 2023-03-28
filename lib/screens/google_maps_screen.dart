@@ -7,9 +7,24 @@ import '../widgets/navigation_bar.dart';
 
 class MarkersList {
   static List<Map<String, dynamic>> list = [
-    {"title": "web center", "id": "1", "lat": 36.88666959507779, "lon": -76.306716388986},
-    {"title": "dragas hall", "id": "2", "lat": 36.88746127841607, "lon": -76.30376257566029},
-    {"title": "constant hall", "id": "3", "lat": 36.88757122942166, "lon": -76.3052626931859},
+    {
+      "title": "web center",
+      "id": "1",
+      "lat": 36.88666959507779,
+      "lon": -76.306716388986
+    },
+    {
+      "title": "dragas hall",
+      "id": "2",
+      "lat": 36.88746127841607,
+      "lon": -76.30376257566029
+    },
+    {
+      "title": "constant hall",
+      "id": "3",
+      "lat": 36.88757122942166,
+      "lon": -76.3052626931859
+    },
   ];
   static int get size => list.length;
 }
@@ -23,7 +38,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   static const LatLng initialLocation = const LatLng(36.8855, -76.3058);
-  static const CameraPosition InitialCameraPostition = CameraPosition(target: initialLocation, zoom: 17.0, tilt: 0, bearing: 0);
+  static const CameraPosition InitialCameraPostition =
+      CameraPosition(target: initialLocation, zoom: 17.0, tilt: 0, bearing: 0);
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   List<Marker> allMarkers = [];
@@ -36,9 +52,9 @@ class _MapScreenState extends State<MapScreen> {
 
   void addCustomIcon() {
     BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(), "assets/TrafficCone128.png")
+            const ImageConfiguration(), "assets/images/marker_small.png")
         .then(
-          (icon) {
+      (icon) {
         setState(() {
           markerIcon = icon;
         });
@@ -54,9 +70,8 @@ class _MapScreenState extends State<MapScreen> {
         position: LatLng(
           MarkersList.list[index]['lat'],
           MarkersList.list[index]['lon'],
-          ),
-        infoWindow: InfoWindow(title: MarkersList.list[index]["title"])
-    );
+        ),
+        infoWindow: InfoWindow(title: MarkersList.list[index]["title"]));
   }
 
   @override
@@ -71,23 +86,23 @@ class _MapScreenState extends State<MapScreen> {
         automaticallyImplyLeading: false,
       ),
       body: GoogleMap(
-        initialCameraPosition: InitialCameraPostition,
-        markers: Set.from(allMarkers),
+          initialCameraPosition: InitialCameraPostition,
+          markers: Set.from(allMarkers),
+          onMapCreated: (GoogleMapController controller) {
+            // mapController = controller;
 
-        onMapCreated: (GoogleMapController controller) {
-          // mapController = controller;
-
-          setState(() {
-            for (var i = 0; i < MarkersList.size; i++) {
-              allMarkers.add( markerBuilder(i, context) );
-            }
-          });
-        },onTap: (tap_latLng) {
-        // print('${latLng.latitude}, ${latLng.longitude}'); // prints lng and lat
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ReportScreen(passed_location: tap_latLng)));
-        }
-      ),
+            setState(() {
+              for (var i = 0; i < MarkersList.size; i++) {
+                allMarkers.add(markerBuilder(i, context));
+              }
+            });
+          },
+          onTap: (tap_latLng) {
+            // print('${latLng.latitude}, ${latLng.longitude}'); // prints lng and lat
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    ReportScreen(passed_location: tap_latLng)));
+          }),
 
       /**
        * Button Location to submit a report. When selected the button
