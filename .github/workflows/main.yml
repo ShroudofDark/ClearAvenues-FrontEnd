@@ -1,5 +1,9 @@
 on: push
 name: Test, Build and Release apk
+permissions:
+  contents: 'write'
+  actions: 'write'
+  statuses: 'write'
 jobs:
   build:
     name: Build APK
@@ -23,8 +27,8 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/flutter-apk/*.apk"
-          tag: 'alpha'
-          token: ${{ secrets.TOKEN }}
+          tag: 'alpha-${{github.sha}}'
+          token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           replacesArtifacts: true
           makeLatest: true
