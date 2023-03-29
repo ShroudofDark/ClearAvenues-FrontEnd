@@ -22,24 +22,22 @@ class _ReportScreenState extends State<ReportScreen> {
 
   //Allows for Images and Other Customization
   List<UnsafeCondition> conditions = [
-    UnsafeCondition(
-        "Debris", "debris", Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition(
-        "Flooding", "flooding", Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition("Debris", "debris",
+        Image.asset("assets/images/Debris64.png")),
+    UnsafeCondition("Flooding", "flooding",
+        Image.asset("assets/images/TrafficCone64.png")),
     UnsafeCondition("Missing Sign", "missing_signage",
-        Image.asset("assets/MissingSign64.png")),
-    UnsafeCondition(
-        "Pothole", "pothole", Image.asset("assets/TrafficCone64.png")),
+        Image.asset("assets/images/MissingSign64.png")),
+    UnsafeCondition("Pothole", "pothole",
+        Image.asset("assets/images/Pothole64.png")),
     UnsafeCondition("Obstructed Sign", "obstructed_sign",
-        Image.asset("assets/TrafficCone64.png")),
+        Image.asset("assets/images/ObstructedSign64.png")),
     UnsafeCondition("Vehicular Related", "vehicle_accident",
-        Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition("Other", "other", Image.asset("assets/TrafficCone64.png")),
+        Image.asset("assets/images/TrafficCone64.png")),
+    UnsafeCondition("Other", "other",
+        Image.asset("assets/images/TrafficCone64.png")),
   ];
 
-  // If you initialize this as UnsafeCondition, you need to mark it as late.
-  // If you do that and someone opens the report page it will throw an error page at you.
-  // Keeping it as var seems to be the cleanest method so far.
   UnsafeCondition? selectedCondition;
 
   final TextEditingController _controller = TextEditingController();
@@ -89,7 +87,7 @@ class _ReportScreenState extends State<ReportScreen> {
               borderRadius: BorderRadius.circular(10),
               //Wrapped in Container to allow for background coloring
               icon: Container(
-                color: Colors.cyan[400],
+                color: Colors.green[500],
                 //The padding size is different here, but matches up size wise with the item
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: const Icon(
@@ -98,7 +96,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 ),
               ),
               elevation: 16,
-              focusColor: Colors.green,
+              focusColor: Colors.cyan,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 24,
@@ -106,7 +104,7 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
               underline: Container(
                 height: 4,
-                color: Colors.green,
+                color: Colors.cyan,
               ),
 
               //Value Info
@@ -123,7 +121,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   child: Container(
                     //Highlights already selected value
                     color: selectedCondition == condition
-                        ? Colors.cyan[200]
+                        ? Colors.green[400]
                         : null,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Row(
@@ -134,7 +132,7 @@ class _ReportScreenState extends State<ReportScreen> {
                         ),
                         condition.img,
                         const SizedBox(
-                          width: 50,
+                          width: 30,
                         ),
                         Text(
                           condition.displayName,
