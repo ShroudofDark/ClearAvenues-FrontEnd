@@ -26,7 +26,8 @@ import 'package:http/http.dart';
  */
 
 //Append this wherever the IP address is used to access database
-const appIP = '192.168.4.37:8080';
+const String appIP = "192.168.137.1";
+const int appPort = 8080;
 
 Future<void> testGet() async {
   var url = Uri.parse('http://$appIP/users');
@@ -42,9 +43,10 @@ Future<bool> loginAuthentication(String email, String password) async {
   var url = Uri(
     scheme: 'http',
     host: appIP,
+    port: appPort,
     path: '/users/login',
     queryParameters: {
-      'email': email,
+      'email_address': email,
       'password': password,
     },
   );
@@ -59,6 +61,9 @@ Future<bool> loginAuthentication(String email, String password) async {
   if (response.body == "true") {
     return Future<bool>.value(true);
   }
+  if (kDebugMode) {
+    print(response.body);
+  }
 
   //Handles basically all error codes, but at the moment on a failed match it returns error code 500
   return Future<bool>.value(false);
@@ -72,6 +77,7 @@ Future<void> registerNewUser(String name, String email, String password) async {
   var url = Uri(
     scheme: 'http',
     host: appIP,
+    port: 8080,
     path: '/users/new',
     queryParameters: {
       'email': email,

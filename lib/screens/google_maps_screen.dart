@@ -82,8 +82,6 @@ class _MapScreenState extends State<MapScreen> {
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.05,
       appBar: AppBar(
         title: const Text('Map View'),
-        //Hide hamburger icon
-        automaticallyImplyLeading: false,
       ),
       body: GoogleMap(
           initialCameraPosition: InitialCameraPostition,
