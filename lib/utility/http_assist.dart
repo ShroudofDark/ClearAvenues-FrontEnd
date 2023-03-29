@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 
 /* Example code - https://suragch.medium.com/how-to-make-http-requests-in-flutter-d12e98ee1cef
@@ -91,3 +92,7 @@ Future<void> registerNewUser(String name, String email, String password) async {
     print('Body: ${response.body}');
   }
 }
+// In Progress....
+//final ReportsProvider = StreamProvider<String>((ref) async* {
+// final re
+//});

@@ -98,10 +98,12 @@ class _MapScreenState extends State<MapScreen> {
             });
           },
           onTap: (tap_latLng) {
+            context.push("/report", extra: tap_latLng);
+            /*
             // print('${latLng.latitude}, ${latLng.longitude}'); // prints lng and lat
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
-                    ReportScreen(passed_location: tap_latLng)));
+                    ReportScreen(passed_location: tap_latLng)));*/
           }),
 
       /**

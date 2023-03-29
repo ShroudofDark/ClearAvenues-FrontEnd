@@ -3,49 +3,44 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({Key? key, required this.passed_location}) : super(key: key);
-  final LatLng passed_location;
+  const ReportScreen({Key? key, this.coordinates = const LatLng(0, 0)})
+      : super(key: key);
+  final LatLng coordinates;
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
 
 class UnsafeCondition {
-  const UnsafeCondition(this.name, this.img);
+  const UnsafeCondition(this.displayName, this.name, this.img);
+  final String displayName;
   final String name;
   final Image img;
 }
 
-
 class _ReportScreenState extends State<ReportScreen> {
-  bool isDriving = true;
-  /* Original List Type
-  static const List<String> options = <String>[
-    'Debris',
-    'Flooding',
-    'Missing Sign',
-    'Pothole',
-    'Obstructed Sign',
-    'Vehicular Related',
-    'Other',
-  ];
-  String dropdownValue = options.first;
-  */
+  bool isDriving = false;
 
   //Allows for Images and Other Customization
   List<UnsafeCondition> conditions = [
-    UnsafeCondition("Debris", Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition("Flooding", Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition("Missing Sign", Image.asset("assets/MissingSign64.png")),
-    UnsafeCondition("Pothole", Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition("Obstructed Sign", Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition("Vehicular Related", Image.asset("assets/TrafficCone64.png")),
-    UnsafeCondition("Other", Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition(
+        "Debris", "debris", Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition(
+        "Flooding", "flooding", Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition("Missing Sign", "missing_signage",
+        Image.asset("assets/MissingSign64.png")),
+    UnsafeCondition(
+        "Pothole", "pothole", Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition("Obstructed Sign", "obstructed_sign",
+        Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition("Vehicular Related", "vehicle_accident",
+        Image.asset("assets/TrafficCone64.png")),
+    UnsafeCondition("Other", "other", Image.asset("assets/TrafficCone64.png")),
   ];
 
   // If you initialize this as UnsafeCondition, you need to mark it as late.
   // If you do that and someone opens the report page it will throw an error page at you.
   // Keeping it as var seems to be the cleanest method so far.
-  var currValue;
+  UnsafeCondition? selectedCondition;
 
   final TextEditingController _controller = TextEditingController();
 
@@ -62,10 +57,16 @@ class _ReportScreenState extends State<ReportScreen> {
           children: <Widget>[
             Stack(
               children: [
-                Image.asset("assets/gmaps_placeholder.webp"), // TODO: replace image with map preview centered around selected area
+                Image.asset(
+                    "assets/gmaps_placeholder.webp"), // TODO: replace image with map preview centered around selected area
                 TextField(
-                  controller: _controller..text = "${widget.passed_location?.longitude} ${widget.passed_location?.latitude}",
-                    onSubmitted: null,
+                  // Will be changed later
+                  controller: _controller
+                    ..text = widget.coordinates.latitude.toString() +
+                        ", " +
+                        widget.coordinates.longitude.toString(),
+                  //"${widget.passed_location?.longitude} ${widget.passed_location?.latitude}",
+                  onSubmitted: null,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       label: Text("Enter a location"),
@@ -74,28 +75,6 @@ class _ReportScreenState extends State<ReportScreen> {
                 ),
               ],
             ),
-
-            /* Original Dropdown Button
-            DropdownButton(
-                hint: const Text("Choose"),
-                value: dropdownValue,
-                onChanged: (value) {
-                  setState(() {
-                    dropdownValue = value!;
-                  });
-                },
-                isExpanded: true,
-
-              // Builds the list of item
-              items: options.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Center(child: Text(value)),
-                );
-              }).toList(),
-            ),
-             */
-
 
             /* New dropdown button for unsafe condition types.
              * Allows for images to act as icons to work alongside the text.
@@ -121,9 +100,9 @@ class _ReportScreenState extends State<ReportScreen> {
               elevation: 16,
               focusColor: Colors.green,
               style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
               underline: Container(
                 height: 4,
@@ -131,10 +110,10 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
 
               //Value Info
-              value: currValue,
+              value: selectedCondition,
               onChanged: (value) {
                 setState(() {
-                  currValue = value!;
+                  selectedCondition = value!;
                 });
               },
 
@@ -143,16 +122,22 @@ class _ReportScreenState extends State<ReportScreen> {
                   value: condition,
                   child: Container(
                     //Highlights already selected value
-                    color: currValue == condition ? Colors.cyan[200] : null,
+                    color: selectedCondition == condition
+                        ? Colors.cyan[200]
+                        : null,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width:20,),
+                        const SizedBox(
+                          width: 20,
+                        ),
                         condition.img,
-                        const SizedBox(width:50,),
+                        const SizedBox(
+                          width: 50,
+                        ),
                         Text(
-                          condition.name,
+                          condition.displayName,
                         ),
                       ],
                     ),
@@ -160,7 +145,6 @@ class _ReportScreenState extends State<ReportScreen> {
                 );
               }).toList(),
             ),
-
             const TextField(
               style: TextStyle(
                 color: Colors.black,
@@ -170,16 +154,16 @@ class _ReportScreenState extends State<ReportScreen> {
               decoration: InputDecoration(labelText: "Enter Description"),
               maxLines: 5,
             ),
-            const Padding(
-              padding: EdgeInsets.all(30.0),
-              child: Icon(
-                  size: 60,
-                  Icons.camera_alt
-              ),
+            const ElevatedButton(
+              onPressed: _onPressSubmit,
+              child: Text('Submit'),
             ),
+            const Icon(size: 60, Icons.camera_alt),
           ],
         ),
       ),
     );
   }
 }
+
+void _onPressSubmit() async {}
