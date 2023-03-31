@@ -1,4 +1,5 @@
 import 'package:clear_avenues/widgets/my_scaffold.dart';
+import 'package:clear_avenues/utility/image_collection_assist.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -152,16 +153,59 @@ class _ReportScreenState extends State<ReportScreen> {
               decoration: InputDecoration(labelText: "Enter Description"),
               maxLines: 5,
             ),
+            ElevatedButton(
+              onPressed: () => _onPressUpload(context),
+              child: Row (
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.camera_alt,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text('Upload Image(s)'),
+                ],
+              ),
+            ),
             const ElevatedButton(
               onPressed: _onPressSubmit,
               child: Text('Submit'),
             ),
-            const Icon(size: 60, Icons.camera_alt),
           ],
         ),
       ),
     );
   }
+}
+
+void _onPressUpload(BuildContext context) {
+
+  Widget cameraButton = const TextButton(
+    onPressed: selectImagesCamera,
+    child: Text("Camera"),
+  );
+  Widget galleryButton = const TextButton(
+    onPressed: selectImagesGallery,
+    child: Text("Gallery"),
+  );
+  Widget cancelButton = TextButton(
+    onPressed: () => Navigator.pop(context),
+    child: const Text("Close"),
+  );
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text("Choose"),
+      content: Text("How would you like to upload an image?"),
+      actions: [
+        cameraButton,
+        galleryButton,
+        cancelButton,
+      ],
+    ),
+  );
 }
 
 void _onPressSubmit() async {}
