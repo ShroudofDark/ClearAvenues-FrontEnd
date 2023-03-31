@@ -1,7 +1,18 @@
 import 'package:clear_avenues/widgets/my_scaffold.dart';
-import 'package:clear_avenues/utility/image_collection_assist.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+ImagePicker picker = ImagePicker();
+List<XFile> imageFileList = []; //For multi-images + gallery
+
+//Dismiss dialogue box help
+BuildContext? dcontext;
+dismissDialog() {
+  if(dcontext != null){
+    Navigator.of(dcontext!).pop();
+  }
+}
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({Key? key, this.coordinates = const LatLng(0, 0)})
@@ -153,6 +164,7 @@ class _ReportScreenState extends State<ReportScreen> {
               decoration: InputDecoration(labelText: "Enter Description"),
               maxLines: 5,
             ),
+            //Upload image box
             ElevatedButton(
               onPressed: () => _onPressUpload(context),
               child: Row (
@@ -168,6 +180,21 @@ class _ReportScreenState extends State<ReportScreen> {
                 ],
               ),
             ),
+            //Image display box
+            SizedBox(
+              height: 100,
+              child:ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: imageFileList.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.red,
+                  );
+                }
+              )
+            ),
             const ElevatedButton(
               onPressed: _onPressSubmit,
               child: Text('Submit'),
@@ -179,7 +206,11 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 }
 
+//Asks user where they want to grab a photo from and calls methods to fetch those photos
 void _onPressUpload(BuildContext context) {
+
+  //Set context to pop whenever needed
+  dcontext = context;
 
   Widget cameraButton = const TextButton(
     onPressed: selectImagesCamera,
@@ -190,7 +221,9 @@ void _onPressUpload(BuildContext context) {
     child: Text("Gallery"),
   );
   Widget cancelButton = TextButton(
-    onPressed: () => Navigator.pop(context),
+    onPressed: () {
+      dismissDialog();
+    },
     child: const Text("Close"),
   );
 
@@ -204,8 +237,26 @@ void _onPressUpload(BuildContext context) {
         galleryButton,
         cancelButton,
       ],
-    ),
-  );
+    )
+  ).whenComplete(() => null);
 }
 
 void _onPressSubmit() async {}
+
+//Get an image from the gallery, can be multiple
+void selectImagesGallery() async {
+  final List<XFile> selectedImages = await picker.pickMultiImage();
+  if (selectedImages!.isNotEmpty) {
+    imageFileList!.addAll(selectedImages);
+  }
+  dismissDialog();
+}
+
+//Get an image from the camera
+void selectImagesCamera() async {
+  final XFile? selectedImage = await picker.pickImage(source: ImageSource.camera);
+  if (selectedImage != null) {
+    imageFileList.add(selectedImage);
+  }
+  dismissDialog();
+}
