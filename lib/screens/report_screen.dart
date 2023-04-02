@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clear_avenues/widgets/my_scaffold.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
@@ -182,15 +184,22 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             //Image display box
             SizedBox(
-              height: 100,
+              height: 150,
               child:ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: imageFileList.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.red,
+                  return SizedBox(
+                    height: 150,
+                    //Row here in order to add a more controlled version of spacing between the images
+                    child: Row(
+                      children: [
+                        Image.file(File(imageFileList[index].path)),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                      ],
+                    ),
                   );
                 }
               )
@@ -238,10 +247,13 @@ void _onPressUpload(BuildContext context) {
         cancelButton,
       ],
     )
-  ).whenComplete(() => null);
+  );
 }
 
-void _onPressSubmit() async {}
+//Submit the information of the report and leave the report screen
+void _onPressSubmit() async {
+
+}
 
 //Get an image from the gallery, can be multiple
 void selectImagesGallery() async {
