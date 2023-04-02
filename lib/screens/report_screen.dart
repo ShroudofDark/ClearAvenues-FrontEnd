@@ -168,7 +168,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             //Upload image box
             ElevatedButton(
-              onPressed: () => _onPressUpload(context),
+              onPressed: () => setState(() => _onPressUpload(context)),
               child: Row (
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -204,9 +204,9 @@ class _ReportScreenState extends State<ReportScreen> {
                 }
               )
             ),
-            const ElevatedButton(
-              onPressed: _onPressSubmit,
-              child: Text('Submit'),
+            ElevatedButton(
+              onPressed: () => _onPressSubmit(context),
+              child: const Text('Submit'),
             ),
           ],
         ),
@@ -239,8 +239,8 @@ void _onPressUpload(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text("Choose"),
-      content: Text("How would you like to upload an image?"),
+      title: const Text("Choose"),
+      content: const Text("How would you like to upload an image?"),
       actions: [
         cameraButton,
         galleryButton,
@@ -251,8 +251,9 @@ void _onPressUpload(BuildContext context) {
 }
 
 //Submit the information of the report and leave the report screen
-void _onPressSubmit() async {
-
+void _onPressSubmit(BuildContext context) async {
+  imageFileList.clear(); //Needs to be manually cleared
+  Navigator.popAndPushNamed(context, '/map');
 }
 
 //Get an image from the gallery, can be multiple
