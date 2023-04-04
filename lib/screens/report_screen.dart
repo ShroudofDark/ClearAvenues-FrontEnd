@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clear_avenues/widgets/my_scaffold.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +197,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             //Upload image box
             ElevatedButton(
-              onPressed: () => _onPressUpload(context),
+              onPressed: () => setState(() => _onPressUpload(context)),
               child: Row (
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -211,22 +213,29 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             //Image display box
             SizedBox(
-              height: 100,
+              height: 150,
               child:ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: imageFileList.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.red,
+                  return SizedBox(
+                    height: 150,
+                    //Row here in order to add a more controlled version of spacing between the images
+                    child: Row(
+                      children: [
+                        Image.file(File(imageFileList[index].path)),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                      ],
+                    ),
                   );
                 }
               )
             ),
-            const ElevatedButton(
-              onPressed: _onPressSubmit,
-              child: Text('Submit'),
+            ElevatedButton(
+              onPressed: () => _onPressSubmit(context),
+              child: const Text('Submit'),
             ),
           ],
         ),
@@ -259,18 +268,22 @@ void _onPressUpload(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text("Choose"),
-      content: Text("How would you like to upload an image?"),
+      title: const Text("Choose"),
+      content: const Text("How would you like to upload an image?"),
       actions: [
         cameraButton,
         galleryButton,
         cancelButton,
       ],
     )
-  ).whenComplete(() => null);
+  );
 }
 
-void _onPressSubmit() async {}
+//Submit the information of the report and leave the report screen
+void _onPressSubmit(BuildContext context) async {
+  imageFileList.clear(); //Needs to be manually cleared
+  Navigator.popAndPushNamed(context, '/map');
+}
 
 //Get an image from the gallery, can be multiple
 void selectImagesGallery() async {
