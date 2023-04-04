@@ -1,4 +1,3 @@
-import 'package:clear_avenues/screens/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,19 +10,31 @@ class MarkersList {
       "title": "web center",
       "id": "1",
       "lat": 36.88666959507779,
-      "lon": -76.306716388986
+      "lon": -76.306716388986,
+      "reportType": "Debris",
+      "reportStatus": "active",
+      "reportTime": "30 mins ago",
+      "reportDescription": "something interesting",
     },
     {
       "title": "dragas hall",
       "id": "2",
       "lat": 36.88746127841607,
-      "lon": -76.30376257566029
+      "lon": -76.30376257566029,
+      "reportType": "pothole",
+      "reportStatus": "active",
+      "reportTime": "10 mins ago",
+      "reportDescription": "something interesting",
     },
     {
       "title": "constant hall",
       "id": "3",
       "lat": 36.88757122942166,
-      "lon": -76.3052626931859
+      "lon": -76.3052626931859,
+      "reportType": "missing signage",
+      "reportStatus": "active",
+      "reportTime": "50 mins ago",
+      "reportDescription": "something interesting",
     },
   ];
   static int get size => list.length;
@@ -63,15 +74,28 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   markerBuilder(int index, BuildContext context) {
+    var temp = MarkersList.list[index];
     return Marker(
-        markerId: MarkerId(MarkersList.list[index]['id']),
+        markerId: MarkerId(temp['id']),
         draggable: false,
         icon: markerIcon,
         position: LatLng(
-          MarkersList.list[index]['lat'],
-          MarkersList.list[index]['lon'],
+          temp['lat'],
+          temp['lon'],
         ),
-        infoWindow: InfoWindow(title: MarkersList.list[index]["title"]));
+        infoWindow: InfoWindow(
+            title: temp["title"],
+            onTap: (){
+              context.goNamed("report_info",
+                  queryParams: {
+                    'p1': temp['reportType'],
+                    'p2': temp['reportStatus'],
+                    'p3': temp['reportTime'],
+                    'p4': temp['reportDescription']
+                  });
+            }
+        )
+    );
   }
 
   @override
@@ -88,6 +112,7 @@ class _MapScreenState extends State<MapScreen> {
           markers: Set.from(allMarkers),
           onMapCreated: (GoogleMapController controller) {
             // mapController = controller;
+            // controller.showMarkerInfoWindow(MarkerId("yourMarkerIdHere"));
 
             setState(() {
               for (var i = 0; i < MarkersList.size; i++) {

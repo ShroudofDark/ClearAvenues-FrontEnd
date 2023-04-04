@@ -15,9 +15,11 @@ dismissDialog() {
 }
 
 class ReportScreen extends StatefulWidget {
+  final LatLng coordinates;
+
   const ReportScreen({Key? key, this.coordinates = const LatLng(0, 0)})
       : super(key: key);
-  final LatLng coordinates;
+
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
@@ -53,6 +55,7 @@ class _ReportScreenState extends State<ReportScreen> {
   UnsafeCondition? selectedCondition;
 
   final TextEditingController _controller = TextEditingController();
+  // static const LatLng initialLocation = const LatLng(36.8855, -76.3058);
 
   // static LatLng loc = LatLng(1.0,1.0);
   // static LatLng? loc = passed_location;
@@ -67,14 +70,40 @@ class _ReportScreenState extends State<ReportScreen> {
           children: <Widget>[
             Stack(
               children: [
-                Image.asset(
-                    "assets/gmaps_placeholder.webp"), // TODO: replace image with map preview centered around selected area
+                SizedBox(
+                  height: 300,
+                  child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                          target: widget.coordinates,
+                          zoom: 20.0, tilt: 0, bearing: 0
+                      ),
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+
+                      //disables movement of map
+                      zoomGesturesEnabled: false,
+                      scrollGesturesEnabled: false,
+                      tiltGesturesEnabled: false,
+                      rotateGesturesEnabled: false,
+
+                      markers: {
+                        Marker(
+                          markerId: const MarkerId("location"),
+                          draggable: false,
+                          position: widget.coordinates,
+                          infoWindow: const InfoWindow(title: "location of issue"),
+                        ),
+                      },
+                      onMapCreated: (GoogleMapController controller) {
+                        controller.showMarkerInfoWindow(
+                          const MarkerId("location"));
+                      },
+                  ),
+                ),
                 TextField(
                   // Will be changed later
                   controller: _controller
-                    ..text = widget.coordinates.latitude.toString() +
-                        ", " +
-                        widget.coordinates.longitude.toString(),
+                    ..text = "${widget.coordinates.latitude}, ${widget.coordinates.longitude}",
                   //"${widget.passed_location?.longitude} ${widget.passed_location?.latitude}",
                   onSubmitted: null,
                   decoration: const InputDecoration(

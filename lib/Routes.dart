@@ -11,6 +11,7 @@ import 'package:clear_avenues/screens/report_screen.dart';
 import 'package:clear_avenues/screens/setting_screen.dart';
 import 'package:clear_avenues/screens/view_history.dart';
 import 'package:clear_avenues/screens/view_organization.dart';
+import 'package:clear_avenues/screens/report_info.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -42,4 +43,27 @@ var routes = [
       path: '/bug_report',
       builder: (context, state) => const BugReportScreen()),
   GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
+  // GoRoute(
+  //     path: '/report_info',
+  //     builder: (context, state) {
+  //       const s1 = 'test1';
+  //       const s2 = 'test2';
+  //       const s3 = 'test3';
+  //       const s4 = 'test4';
+  //       String p1 = ((state.extra) ?? s1) as String;
+  //       String p2 = ((state.extra) ?? s2) as String;
+  //       String p3 = ((state.extra) ?? s3) as String;
+  //       String p4 = ((state.extra) ?? s4) as String;
+  //       return ReportInfoScreen(ReportType: p1, ReportStatus: p2, ReportTime: p3, ReportDescription: p4);
+  //     }),
+  GoRoute(
+    name: "report_info",
+    path: "/report_info",
+    builder: (context, state) => ReportInfoScreen(
+      ReportType: state.queryParams['p1'],
+      ReportStatus: state.queryParams['p2'],
+      ReportTime: state.queryParams['p3'],
+      ReportDecription: state.queryParams['p4'],
+    ),
+  )
 ];
