@@ -6,7 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 ImagePicker picker = ImagePicker();
-List<XFile> imageFileList = []; //For multi-images + gallery
+
+/// Hacky way to get image list to update by changing this value and having the image
+/// list built inside a value listen builder. Not 100% if the reason this is working is due
+/// to it actually being rebuilt upon an update or if its because the async function is being
+/// funky. If image has weird issues loading, then this is why.
+final cheatUpdate = ValueNotifier<int>(0);
 
 //Dismiss dialogue box help
 BuildContext? dcontext;
@@ -53,6 +58,8 @@ class _ReportScreenState extends State<ReportScreen> {
     UnsafeCondition("Other", "other",
         Image.asset("assets/images/TrafficCone64.png")),
   ];
+
+  List<XFile> imageFileList = []; //For multi-images + gallery
 
   UnsafeCondition? selectedCondition;
 
@@ -197,7 +204,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             //Upload image box
             ElevatedButton(
-              onPressed: () => setState(() => _onPressUpload(context)),
+              onPressed: () => _onPressUpload(context, imageFileList),
               child: Row (
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
@@ -211,30 +218,51 @@ class _ReportScreenState extends State<ReportScreen> {
                 ],
               ),
             ),
-            //Image display box
-            SizedBox(
-              height: 150,
-              child:ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: imageFileList.length,
-                itemBuilder: (context, index) {
+            //Image display
+            ValueListenableBuilder(
+              valueListenable: cheatUpdate,
+              builder: (context, value, widget) {
+                if (imageFileList.isNotEmpty) {
                   return SizedBox(
-                    height: 150,
-                    //Row here in order to add a more controlled version of spacing between the images
-                    child: Row(
-                      children: [
-                        Image.file(File(imageFileList[index].path)),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                      ],
+                      height: 150,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: imageFileList.length,
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              height: 150,
+                              //Row here in order to add a more controlled version of spacing between the images
+                              child: Row(
+                                children: [
+                                  Image.file(File(imageFileList[index].path)),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                      )
+                  );
+                }
+                else {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Images Are Optional",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   );
                 }
-              )
+              }
             ),
             ElevatedButton(
-              onPressed: () => _onPressSubmit(context),
+              onPressed: () => _onPressSubmit(context, imageFileList),
               child: const Text('Submit'),
             ),
           ],
@@ -245,18 +273,18 @@ class _ReportScreenState extends State<ReportScreen> {
 }
 
 //Asks user where they want to grab a photo from and calls methods to fetch those photos
-void _onPressUpload(BuildContext context) {
+void _onPressUpload(BuildContext context, List<XFile> imageFileList) {
 
   //Set context to pop whenever needed
   dcontext = context;
 
-  Widget cameraButton = const TextButton(
-    onPressed: selectImagesCamera,
-    child: Text("Camera"),
+  Widget cameraButton = TextButton(
+    onPressed: () => selectImagesCamera(imageFileList),
+    child: const Text("Camera"),
   );
-  Widget galleryButton = const TextButton(
-    onPressed: selectImagesGallery,
-    child: Text("Gallery"),
+  Widget galleryButton = TextButton(
+    onPressed:() => selectImagesGallery(imageFileList),
+    child: const Text("Gallery"),
   );
   Widget cancelButton = TextButton(
     onPressed: () {
@@ -280,25 +308,28 @@ void _onPressUpload(BuildContext context) {
 }
 
 //Submit the information of the report and leave the report screen
-void _onPressSubmit(BuildContext context) async {
+void _onPressSubmit(BuildContext context, List<XFile> imageFileList) async {
   imageFileList.clear(); //Needs to be manually cleared
+  cheatUpdate.value = 0;
   Navigator.popAndPushNamed(context, '/map');
 }
 
 //Get an image from the gallery, can be multiple
-void selectImagesGallery() async {
+void selectImagesGallery(List<XFile> imageFileList) async {
   final List<XFile> selectedImages = await picker.pickMultiImage();
   if (selectedImages!.isNotEmpty) {
     imageFileList!.addAll(selectedImages);
   }
+  cheatUpdate.value++;
   dismissDialog();
 }
 
 //Get an image from the camera
-void selectImagesCamera() async {
+void selectImagesCamera(List<XFile> imageFileList) async {
   final XFile? selectedImage = await picker.pickImage(source: ImageSource.camera);
   if (selectedImage != null) {
     imageFileList.add(selectedImage);
   }
+  cheatUpdate.value++;
   dismissDialog();
 }
