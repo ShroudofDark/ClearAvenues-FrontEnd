@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:clear_avenues/widgets/my_scaffold.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,15 +61,34 @@ class _ReportScreenState extends State<ReportScreen> {
   ];
 
   List<XFile> imageFileList = []; //For multi-images + gallery
-
   UnsafeCondition? selectedCondition;
+  String? _address;
 
-  final TextEditingController _controller = TextEditingController();
+  //Function that converts longitude and latitude to readable address
+  //Function modified from:
+  // https://medium.com/@fernnandoptr/how-to-get-users-current-location-address-in-flutter-geolocator-geocoding-be563ad6f66a
+  Future<void> _getAddressFromCoords() async {
+    await placemarkFromCoordinates(widget.coordinates.latitude, widget.coordinates.longitude)
+        .then((List<Placemark> placemarks) {
+          Placemark place = placemarks[0];
+          setState(() {
+            _address =
+            '${place.street}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}';
+          });
+        });
+  }
+
   // static const LatLng initialLocation = const LatLng(36.8855, -76.3058);
 
   // static LatLng loc = LatLng(1.0,1.0);
   // static LatLng? loc = passed_location;
   // static String s = "${loc?.longitude} ${loc?.latitude}";
+  
+  @override
+  void initState() {
+    super.initState();
+    _getAddressFromCoords(); //Set Display Text when screen starts
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,45 +101,54 @@ class _ReportScreenState extends State<ReportScreen> {
               children: [
                 SizedBox(
                   height: 300,
-                  child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                          target: widget.coordinates,
-                          zoom: 20.0, tilt: 0, bearing: 0
-                      ),
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-
-                      //disables movement of map
-                      zoomGesturesEnabled: false,
-                      scrollGesturesEnabled: false,
-                      tiltGesturesEnabled: false,
-                      rotateGesturesEnabled: false,
-
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId("location"),
-                          draggable: false,
-                          position: widget.coordinates,
-                          infoWindow: const InfoWindow(title: "location of issue"),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 3.0, color: Colors.green),
+                    ),
+                    child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                            target: widget.coordinates,
+                            zoom: 20.0, tilt: 0, bearing: 0
                         ),
-                      },
-                      onMapCreated: (GoogleMapController controller) {
-                        controller.showMarkerInfoWindow(
-                          const MarkerId("location"));
-                      },
+                        myLocationButtonEnabled: false,
+                        zoomControlsEnabled: false,
+
+                        //disables movement of map
+                        zoomGesturesEnabled: false,
+                        scrollGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
+
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId("location"),
+                            draggable: false,
+                            position: widget.coordinates,
+                            infoWindow: const InfoWindow(title: "location of issue"),
+                          ),
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          controller.showMarkerInfoWindow(
+                            const MarkerId("location"));
+                        },
+                    ),
                   ),
                 ),
-                TextField(
-                  // Will be changed later
-                  controller: _controller
-                    ..text = "${widget.coordinates.latitude}, ${widget.coordinates.longitude}",
-                  //"${widget.passed_location?.longitude} ${widget.passed_location?.latitude}",
-                  onSubmitted: null,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("Enter a location"),
-                      filled: true,
-                      fillColor: Colors.white),
+                Container (
+                  padding: const EdgeInsets.all(16.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 3.0),
+                    color: Colors.white,
+                  ),
+                  child: Text(
+                    "$_address",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -152,9 +181,9 @@ class _ReportScreenState extends State<ReportScreen> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
+              //Removes the underline from dropdown
               underline: Container(
-                height: 4,
-                color: Colors.cyan,
+                height: 0,
               ),
 
               //Value Info
@@ -193,14 +222,20 @@ class _ReportScreenState extends State<ReportScreen> {
                 );
               }).toList(),
             ),
-            const TextField(
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 2.0,horizontal: 16.0),
+              decoration: const BoxDecoration(
+                border: Border(top: BorderSide(width: 4.0, color: Colors.cyan)),
               ),
-              decoration: InputDecoration(labelText: "Enter Description"),
-              maxLines: 5,
+              child: const TextField(
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(labelText: "Enter Description"),
+                maxLines: 5,
+              ),
             ),
             //Upload image box
             ElevatedButton(
@@ -333,3 +368,4 @@ void selectImagesCamera(List<XFile> imageFileList) async {
   cheatUpdate.value++;
   dismissDialog();
 }
+
