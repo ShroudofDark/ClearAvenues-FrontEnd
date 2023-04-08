@@ -69,35 +69,7 @@ Future<bool> loginAuthentication(String email, String password) async {
   return Future<bool>.value(false);
 }
 
-Future<void> registerNewUser(String name, String email, String password) async {
-  //TODO: Pass in the type of account being registered for in future
-  String accountType = "admin";
 
-  // Neater way
-  var url = Uri(
-    scheme: 'http',
-    host: appIP,
-    port: 8080,
-    path: '/users/new',
-    queryParameters: {
-      'email': email,
-      'password': password,
-      'display_name': name,
-      'account_type': accountType
-    },
-  );
-  // Old way
-  //var url = Uri.parse(
-  //    'http://$appIP/users/new?email_address=$email&password=$password&display_name=$name&account_type=$accountType');
-
-  Response response = await post(url);
-  // Only print if we're running in debug mode
-  if (kDebugMode) {
-    print('Status code: ${response.statusCode}');
-    print('Headers: ${response.headers}');
-    print('Body: ${response.body}');
-  }
-}
 // In Progress....
 //final ReportsProvider = StreamProvider<String>((ref) async* {
 // final re
