@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as loc;
 
 import '../widgets/navigation_bar.dart';
 
@@ -48,16 +50,29 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  static const LatLng initialLocation = const LatLng(36.8855, -76.3058);
-  static const CameraPosition InitialCameraPostition =
-      CameraPosition(target: initialLocation, zoom: 17.0, tilt: 0, bearing: 0);
+  loc.Location location = loc.Location();
+  //loc.LocationData? userLocation;
+  late Future cameraPosBuilder;
+  late CameraPosition initialCameraPosition;
+  bool isLoading = true;
+
+  /*
+  static const LatLng defaultLocation = LatLng(36.8855, -76.3058);
+  CameraPosition defaultCameraPosition = const CameraPosition(target: defaultLocation, zoom: 17.0, tilt: 0, bearing: 0);
+  */
+
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   List<Marker> allMarkers = [];
 
   @override
   void initState() {
-    addCustomIcon();
+    cameraPosBuilder = getUserStartCamera(location);
+    setLocation() async {
+      initialCameraPosition = await cameraPosBuilder;
+      isLoading = false;
+    }
+    setLocation();
     super.initState();
   }
 
@@ -107,33 +122,45 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text('Map View'),
       ),
-      body: GoogleMap(
-          initialCameraPosition: InitialCameraPostition,
-          markers: Set.from(allMarkers),
-          onMapCreated: (GoogleMapController controller) {
-            // mapController = controller;
-            // controller.showMarkerInfoWindow(MarkerId("yourMarkerIdHere"));
-
-            setState(() {
-              for (var i = 0; i < MarkersList.size; i++) {
-                allMarkers.add(markerBuilder(i, context));
-              }
-            });
-          },
-          onTap: (tap_latLng) {
-            context.push("/report", extra: tap_latLng);
-            /*
-            // print('${latLng.latitude}, ${latLng.longitude}'); // prints lng and lat
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    ReportScreen(passed_location: tap_latLng)));*/
-          }),
-
+      body: FutureBuilder (
+        future: cameraPosBuilder,
+        builder: (ctx, snapshot) {
+          if(snapshot.connectionState == ConnectionState.done) {
+            if(snapshot.hasError) {
+              return Text("check error!");
+            }
+            else if (snapshot.hasData) {
+              return Stack(
+                children: [
+                  GoogleMap(
+                    myLocationEnabled: true,
+                    initialCameraPosition: initialCameraPosition,
+                    markers: Set.from(allMarkers),
+                    onMapCreated: (GoogleMapController controller) {
+                      setState(() {
+                        for (var i = 0; i < MarkersList.size; i++) {
+                          allMarkers.add(markerBuilder(i, context));
+                        }
+                      });
+                    },
+                    onTap: (tap_latLng) {
+                      context.push("/report", extra: tap_latLng);
+                    }
+                  ),
+                ],
+              );
+            }
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
       /**
        * Button Location to submit a report. When selected the button
        * is to open the report screen and transfer user to that screen.
        */
-      floatingActionButton: SizedBox(
+      floatingActionButton: isLoading? null : SizedBox(
         height: MediaQuery.of(context).size.height * 0.05,
         child: FloatingActionButton.extended(
           icon: const Icon(Icons.report),
@@ -146,4 +173,11 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+}
+
+Future<CameraPosition> getUserStartCamera(loc.Location location) async {
+  //Do a one time check to determine user's starting location
+  loc.LocationData userLocation = await location.getLocation();
+  LatLng conversion = LatLng(userLocation.latitude!, userLocation.longitude!);
+  return CameraPosition(target: conversion, zoom: 17.0, tilt: 0, bearing: 0);
 }
