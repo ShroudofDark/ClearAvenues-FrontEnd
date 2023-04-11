@@ -67,18 +67,19 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
-    cameraPosBuilder = getUserStartCamera(location);
     setLocation() async {
+      cameraPosBuilder = getUserStartCamera(location);
       initialCameraPosition = await cameraPosBuilder;
       isLoading = false;
     }
     setLocation();
+    addCustomIcon();
     super.initState();
   }
 
   void addCustomIcon() {
     BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), "assets/images/marker_small.png")
+            const ImageConfiguration(), "assets/images/TrafficCone64.png")
         .then(
       (icon) {
         setState(() {
@@ -165,8 +166,16 @@ class _MapScreenState extends State<MapScreen> {
         child: FloatingActionButton.extended(
           icon: const Icon(Icons.report),
           label: const Text('Report Unsafe Condition'),
-          onPressed: () => {
-            context.push('/report'),
+          onPressed: () {
+            LatLng currCoords = const LatLng(0, 0);
+            getCurrCoords() async {
+              loc.LocationData userLocation = await location.getLocation();
+              currCoords = LatLng(userLocation.latitude!, userLocation.longitude!);
+              if(context.mounted) {
+                context.push('/report', extra: currCoords);
+              }
+            }
+            getCurrCoords();
           },
         ),
       ),
