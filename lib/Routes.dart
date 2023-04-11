@@ -1,6 +1,7 @@
 import 'package:clear_avenues/screens/about_screen.dart';
 import 'package:clear_avenues/screens/analysis_screen.dart';
 import 'package:clear_avenues/screens/bug_screen.dart';
+import 'package:clear_avenues/screens/demo_buttons.dart';
 import 'package:clear_avenues/screens/dev_screen.dart';
 import 'package:clear_avenues/screens/google_maps_screen.dart';
 import 'package:clear_avenues/screens/help_screen.dart';
@@ -43,6 +44,7 @@ var routes = [
       path: '/bug_report',
       builder: (context, state) => const BugReportScreen()),
   GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
+  GoRoute(path: '/demo_button', builder: (context, state) => const DemoButtonScreen()),
   // GoRoute(
   //     path: '/report_info',
   //     builder: (context, state) {

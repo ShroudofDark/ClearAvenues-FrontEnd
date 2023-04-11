@@ -130,6 +130,8 @@ class NavBar extends StatelessWidget {
                 contentPadding: navigationListPadding,
               ),
 
+              createListTile('/demo_button','Demo Buttons', Icons.developer_mode),
+
             ],
           )
         )
