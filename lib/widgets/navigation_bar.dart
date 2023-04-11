@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /* Navigation bar is toolbar that expands from the left screen
  * and provides navigation options for the user in order to access
@@ -113,14 +114,32 @@ class NavBar extends StatelessWidget {
 
               createListTile('/help','Help', Icons.question_mark_rounded),
               createListTile('/about','About', Icons.info_outline_rounded),
-              createListTile('/bug_report','Bug Report', Icons.bug_report),
+
+              //Different from others due to just launching a form instead
+              ListTile(
+                //Altered from Keshaun's Dev Screen
+                onTap: () => _launchURL(),
+                leading: const Icon(
+                  Icons.bug_report,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text('Bug Report',
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
 
             ],
           )
         )
       ),
     );
-
   }
 }
 
+_launchURL() async {
+  const url = 'https://docs.google.com/forms/d/e/1FAIpQLSdepgyxcRTXgfiWBmG4imazlIl2ni3VJcjhPQ_JP_81ws96Tw/viewform?usp=sf_link';
+  final uri = Uri.parse(url);
+  await launchUrl(uri, mode: LaunchMode.externalApplication);
+}
