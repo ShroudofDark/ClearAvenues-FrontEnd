@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 
 import '../widgets/navigation_bar.dart';
+import '../utility/demo_assist.dart';
 
 class MarkersList {
   static List<Map<String, dynamic>> list = [
@@ -174,7 +175,15 @@ class _MapScreenState extends State<MapScreen> {
                 context.push('/report', extra: currCoords);
               }
             }
-            getCurrCoords();
+            //If not demoing do this
+            if(!isDemoing) {
+              getCurrCoords();
+            }
+            //If demoing do this
+            else {
+              currCoords = newCurrLoc;
+              context.push('/report', extra: currCoords);
+            }
           },
         ),
       ),
@@ -184,8 +193,14 @@ class _MapScreenState extends State<MapScreen> {
 }
 
 Future<CameraPosition> getUserStartCamera(loc.Location location) async {
-  //Do a one time check to determine user's starting location
-  loc.LocationData userLocation = await location.getLocation();
-  LatLng conversion = LatLng(userLocation.latitude!, userLocation.longitude!);
-  return CameraPosition(target: conversion, zoom: 17.0, tilt: 0, bearing: 0);
+  //If application is not demonstrating, get actual current location
+  if(!isDemoing) {
+    //Do a one time check to determine user's starting location
+    loc.LocationData userLocation = await location.getLocation();
+    LatLng conversion = LatLng(userLocation.latitude!, userLocation.longitude!);
+    return CameraPosition(target: conversion, zoom: 17.0, tilt: 0, bearing: 0);
+  }
+
+  //If the application is demonstrating, do this instead
+  return CameraPosition(target: newCurrLoc, zoom: 17.0, tilt: 0, bearing: 0);
 }
