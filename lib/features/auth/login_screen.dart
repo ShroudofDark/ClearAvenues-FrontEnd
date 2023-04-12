@@ -5,6 +5,7 @@ import 'package:clear_avenues/utility/http_assist.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 import '../../widgets/my_scaffold.dart';
+import 'package:clear_avenues/constants.dart';
 
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
@@ -105,8 +106,8 @@ class _LoginScreenState extends State<LoginScreen> {
 Future<bool> loginAuthentication(String email, String password) async {
   var url = Uri(
     scheme: 'http',
-    host: appIP,
-    port: appPort,
+    host: Constants.serverIP,
+    port: Constants.serverPort,
     path: '/users/login',
     queryParameters: {
       'email_address': email,

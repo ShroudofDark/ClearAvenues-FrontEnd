@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:clear_avenues/utility/http_assist.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
+import 'package:clear_avenues/constants.dart';
 
 //Used to fetch input data
 TextEditingController nameController = TextEditingController();
@@ -189,8 +190,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       var url = Uri(
         scheme: 'http',
-        host: appIP,
-        port: appPort,
+        host: Constants.serverIP,
+        port: Constants.serverPort,
         path: '/users/new',
         queryParameters: {
           'email': emailController.text,
