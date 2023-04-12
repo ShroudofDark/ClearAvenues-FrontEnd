@@ -393,7 +393,7 @@ void _onPressSubmit(BuildContext context, List<XFile> imageFileList,
   //Response response = await post(url);
 
   //Leave Screen Section - Cleanup
-  description.dispose();
+  //description.dispose();
   cheatUpdate.value = 0;
 
   if (context.mounted) {
