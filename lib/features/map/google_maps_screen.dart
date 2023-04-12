@@ -103,7 +103,7 @@ class _MapScreenState extends State<MapScreen> {
         infoWindow: InfoWindow(
             title: temp["title"],
             onTap: () {
-              context.goNamed("report_info", queryParams: {
+              context.pushNamed("report_info", queryParams: {
                 'p1': temp['reportType'],
                 'p2': temp['reportStatus'],
                 'p3': temp['reportTime'],
