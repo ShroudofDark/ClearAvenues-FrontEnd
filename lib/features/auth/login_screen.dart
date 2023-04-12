@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:clear_avenues/widgets/login_form_field.dart';
 import 'package:clear_avenues/utility/http_assist.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/my_scaffold.dart';
+import '../../widgets/my_scaffold.dart';
 
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();

@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 
-import '../widgets/navigation_bar.dart';
-import '../utility/demo_assist.dart';
+import '../../widgets/navigation_bar.dart';
+import '../dev/demo_assist.dart';
 
 class MarkersList {
   static List<Map<String, dynamic>> list = [
@@ -72,6 +72,7 @@ class _MapScreenState extends State<MapScreen> {
       initialCameraPosition = await cameraPosBuilder;
       isLoading = false;
     }
+
     setLocation();
     addCustomIcon();
     super.initState();
@@ -101,17 +102,14 @@ class _MapScreenState extends State<MapScreen> {
         ),
         infoWindow: InfoWindow(
             title: temp["title"],
-            onTap: (){
-              context.goNamed("report_info",
-                  queryParams: {
-                    'p1': temp['reportType'],
-                    'p2': temp['reportStatus'],
-                    'p3': temp['reportTime'],
-                    'p4': temp['reportDescription']
-                  });
-            }
-        )
-    );
+            onTap: () {
+              context.goNamed("report_info", queryParams: {
+                'p1': temp['reportType'],
+                'p2': temp['reportStatus'],
+                'p3': temp['reportTime'],
+                'p4': temp['reportDescription']
+              });
+            }));
   }
 
   @override
@@ -123,31 +121,29 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text('Map View'),
       ),
-      body: FutureBuilder (
+      body: FutureBuilder(
         future: cameraPosBuilder,
         builder: (ctx, snapshot) {
-          if(snapshot.connectionState == ConnectionState.done) {
-            if(snapshot.hasError) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
               return Text("check error!");
-            }
-            else if (snapshot.hasData) {
+            } else if (snapshot.hasData) {
               return Stack(
                 children: [
                   GoogleMap(
-                    myLocationEnabled: true,
-                    initialCameraPosition: initialCameraPosition,
-                    markers: Set.from(allMarkers),
-                    onMapCreated: (GoogleMapController controller) {
-                      setState(() {
-                        for (var i = 0; i < MarkersList.size; i++) {
-                          allMarkers.add(markerBuilder(i, context));
-                        }
-                      });
-                    },
-                    onTap: (tap_latLng) {
-                      context.push("/report", extra: tap_latLng);
-                    }
-                  ),
+                      myLocationEnabled: true,
+                      initialCameraPosition: initialCameraPosition,
+                      markers: Set.from(allMarkers),
+                      onMapCreated: (GoogleMapController controller) {
+                        setState(() {
+                          for (var i = 0; i < MarkersList.size; i++) {
+                            allMarkers.add(markerBuilder(i, context));
+                          }
+                        });
+                      },
+                      onTap: (tap_latLng) {
+                        context.push("/report", extra: tap_latLng);
+                      }),
                 ],
               );
             }
@@ -161,32 +157,37 @@ class _MapScreenState extends State<MapScreen> {
        * Button Location to submit a report. When selected the button
        * is to open the report screen and transfer user to that screen.
        */
-      floatingActionButton: isLoading? null : SizedBox(
-        height: MediaQuery.of(context).size.height * 0.05,
-        child: FloatingActionButton.extended(
-          icon: const Icon(Icons.report),
-          label: const Text('Report Unsafe Condition'),
-          onPressed: () {
-            LatLng currCoords = const LatLng(0, 0);
-            getCurrCoords() async {
-              loc.LocationData userLocation = await location.getLocation();
-              currCoords = LatLng(userLocation.latitude!, userLocation.longitude!);
-              if(context.mounted) {
-                context.push('/report', extra: currCoords);
-              }
-            }
-            //If not demoing do this
-            if(!isDemoing) {
-              getCurrCoords();
-            }
-            //If demoing do this
-            else {
-              currCoords = newCurrLoc;
-              context.push('/report', extra: currCoords);
-            }
-          },
-        ),
-      ),
+      floatingActionButton: isLoading
+          ? null
+          : SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+              child: FloatingActionButton.extended(
+                icon: const Icon(Icons.report),
+                label: const Text('Report Unsafe Condition'),
+                onPressed: () {
+                  LatLng currCoords = const LatLng(0, 0);
+                  getCurrCoords() async {
+                    loc.LocationData userLocation =
+                        await location.getLocation();
+                    currCoords =
+                        LatLng(userLocation.latitude!, userLocation.longitude!);
+                    if (context.mounted) {
+                      context.push('/report', extra: currCoords);
+                    }
+                  }
+
+                  //If not demoing do this
+                  if (!isDemoing) {
+                    getCurrCoords();
+                  }
+                  //If demoing do this
+                  else {
+                    currCoords = newCurrLoc;
+                    context.push('/report', extra: currCoords);
+                  }
+                },
+              ),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -194,7 +195,7 @@ class _MapScreenState extends State<MapScreen> {
 
 Future<CameraPosition> getUserStartCamera(loc.Location location) async {
   //If application is not demonstrating, get actual current location
-  if(!isDemoing) {
+  if (!isDemoing) {
     //Do a one time check to determine user's starting location
     loc.LocationData userLocation = await location.getLocation();
     LatLng conversion = LatLng(userLocation.latitude!, userLocation.longitude!);

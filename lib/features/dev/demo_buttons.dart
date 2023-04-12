@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../utility/demo_assist.dart';
+import 'package:clear_avenues/features/dev/demo_assist.dart';
 
 class DemoButtonScreen extends StatefulWidget {
   const DemoButtonScreen({super.key});
