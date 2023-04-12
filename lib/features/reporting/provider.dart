@@ -10,13 +10,17 @@ final reportProvider = StreamProvider<List<Report>>((ref) async* {
     final url = Uri.parse(
         "http://${Constants.serverIP}:${Constants.serverPort}/reports");
     List<Report>? reports;
-    await Future.delayed(const Duration(milliseconds: 1000));
-    Response resp = await get(url);
-    if (resp.statusCode == 200) {
-      Iterable jsonList = json.decode(resp.body);
-      reports =
-          List<Report>.from(jsonList.map((report) => Report.fromJson(report)));
-      yield reports;
+    try {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      Response resp = await get(url);
+      if (resp.statusCode == 200) {
+        Iterable jsonList = json.decode(resp.body);
+        reports = List<Report>.from(
+            jsonList.map((report) => Report.fromJson(report)));
+        yield reports;
+      }
+    } catch (err) {
+      print("Error getting reports: ${err.toString()}");
     }
   }
 });

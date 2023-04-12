@@ -23,8 +23,12 @@ class _ViewHistoryState extends ConsumerState<ViewHistory> {
                 itemCount: reports.length,
                 itemBuilder: (context, index) {
                   final comment = reports[index].reportComment;
+                  final reportType = reports[index].reportType;
                   return ListTile(
-                    title: Text(comment!),
+                    title: Text(reportType!),
+                    subtitle: Text(comment!),
+                    trailing: const Icon(Icons.more_vert),
+                    isThreeLine: true,
                   );
                 },
               );
