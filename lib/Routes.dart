@@ -1,17 +1,18 @@
-import 'package:clear_avenues/screens/about_screen.dart';
-import 'package:clear_avenues/screens/analysis_screen.dart';
-import 'package:clear_avenues/screens/bug_screen.dart';
-import 'package:clear_avenues/screens/dev_screen.dart';
-import 'package:clear_avenues/screens/google_maps_screen.dart';
-import 'package:clear_avenues/screens/help_screen.dart';
-import 'package:clear_avenues/screens/login_screen.dart';
-import 'package:clear_avenues/screens/notification_screen.dart';
-import 'package:clear_avenues/screens/register_screen.dart';
-import 'package:clear_avenues/screens/report_screen.dart';
-import 'package:clear_avenues/screens/setting_screen.dart';
-import 'package:clear_avenues/screens/view_history.dart';
-import 'package:clear_avenues/screens/view_organization.dart';
-import 'package:clear_avenues/screens/report_info.dart';
+import 'package:clear_avenues/features/account/about_screen.dart';
+import 'package:clear_avenues/features/map/analysis_screen.dart';
+import 'package:clear_avenues/features/account/bug_screen.dart';
+import 'package:clear_avenues/features/dev/demo_buttons.dart';
+import 'package:clear_avenues/features/dev/dev_screen.dart';
+import 'package:clear_avenues/features/map/google_maps_screen.dart';
+import 'package:clear_avenues/features/account/help_screen.dart';
+import 'package:clear_avenues/features/auth/login_screen.dart';
+import 'package:clear_avenues/features/account/notification_screen.dart';
+import 'package:clear_avenues/features/auth/register_screen.dart';
+import 'package:clear_avenues/features/reporting/report_screen.dart';
+import 'package:clear_avenues/features/account/setting_screen.dart';
+import 'package:clear_avenues/features/reporting/view_history.dart';
+import 'package:clear_avenues/features/account/view_organization.dart';
+import 'package:clear_avenues/features/reporting/report_info.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -43,6 +44,9 @@ var routes = [
       path: '/bug_report',
       builder: (context, state) => const BugReportScreen()),
   GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
+  GoRoute(
+      path: '/demo_button',
+      builder: (context, state) => const DemoButtonScreen()),
   // GoRoute(
   //     path: '/report_info',
   //     builder: (context, state) {
