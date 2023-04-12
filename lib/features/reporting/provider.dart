@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:clear_avenues/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 
@@ -7,8 +7,9 @@ import '../../models/Report.dart';
 
 final reportProvider = StreamProvider<List<Report>>((ref) async* {
   while (true) {
-    final url = Uri.parse("http://10.254.106.216:8080/reports");
-    List<Report>? reports = null;
+    final url = Uri.parse(
+        "http://${Constants.serverIP}:${Constants.serverPort}/reports");
+    List<Report>? reports;
     await Future.delayed(const Duration(milliseconds: 1000));
     Response resp = await get(url);
     if (resp.statusCode == 200) {
