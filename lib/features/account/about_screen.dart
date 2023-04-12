@@ -31,7 +31,9 @@ class AboutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 const Text(
-                  'The application is intended to help users plan their routes and avoid traffic congestion, as well as report any road conditions or incidents that may affect others.',
+                  'The application is intended to help users plan their'
+                      ' routes and avoid traffic congestion, as well as report '
+                      'any road conditions or incidents that may affect others.',
                 ),
                 const SizedBox(height: 16.0),
                 const Text(
