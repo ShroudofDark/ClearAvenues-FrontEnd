@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../auth/login_screen.dart';
+//import '../auth/login_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -9,80 +9,102 @@ class SettingScreen extends StatefulWidget {
 }
 
 class SettingScreenState extends State<SettingScreen> {
-  bool _notificationValue = false;
-  void setNotificationValue(bool value) {
-    setState(() {
-      _notificationValue = value;
-      // _notificationValue = !_notificationValue;
-    });
-  }
-
-  bool getNotificationValue() {
-    return _notificationValue;
-  }
+  bool _notificationsEnabled = true;
+  double _soundLevel = 50;
+  bool _alertsMuted = false;
 
   @override
   Widget build(BuildContext context) {
+    const textStyle = TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+    );
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.green,
-          title: const Text('Setting'),
+      appBar: AppBar(
+        title: const Text('Settings'),
+      ),
+      body: ListView(
+        children: [
+          _buildGeneralCategory(textStyle),
+          _buildVoiceAndSoundCategory(textStyle),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGeneralCategory(TextStyle textStyle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'General',
+            style: textStyle,
+          ),
         ),
-        body: ListView(
-          children: <Widget>[
-            //general section
-            const ExpansionTile(title: Text("General"), children: <Widget>[
-              ListTile(
-                title: Text("App Version"),
-                subtitle: Text("1.0.0"),
-              ),
-              ListTile(
-                title: Text("About"),
-                subtitle: Text("Description goes here"),
-              ),
-            ]),
-            ExpansionTile(
-              title: const Text("Notifications"),
-              children: [
-                Center(
-                    child: ElevatedButton(
-                  child: Text(_notificationValue ? "OFF" : "ON"),
-                  onPressed: () {
-                    setNotificationValue(!_notificationValue);
-                  },
-                ))
-              ],
+        const Divider(height: 0),
+        const ListTile(
+          title: Text('App Version'),
+          trailing: Text('1.0'),
+        ),
+        SwitchListTile(
+          title: const Text('Notifications'),
+          value: _notificationsEnabled,
+          onChanged: (value) {
+            setState(() {
+              _notificationsEnabled = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVoiceAndSoundCategory(TextStyle textStyle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Volume ',
+            style: textStyle,
+          ),
+        ),
+        const Divider(height: 0),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Sound Level',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
-            ExpansionTile(title: Text("Account"), children: <Widget>[
-              ListTile(
-                  title: const Text("Login"),
-                  onTap: () {
-                    ElevatedButton(
-                        child: const Text("Login"),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                          );
-                        });
-                  })
-            ]),
-            const ExpansionTile(title: Text("Helo"), children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text("This section provides information and resources"
-                    "to help you use the app."),
-              )
-            ]),
-            const ExpansionTile(title: Text("Report Bug"), children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text("Report bug is a feature in the application"
-                    "that allows the users to report any issue."),
-              )
-            ])
-          ],
-        ));
+          ),
+        ),
+        Slider(
+          value: _soundLevel,
+          min: 0,
+          max: 100,
+          onChanged: (value) {
+            setState(() {
+              _soundLevel = value;
+            });
+          },
+        ),
+        SwitchListTile(
+          title: const Text('Mute Alerts'),
+          value: _alertsMuted,
+          onChanged: (value) {
+            setState(() {
+              _alertsMuted = value;
+            });
+          },
+        ),
+      ],
+    );
   }
 }

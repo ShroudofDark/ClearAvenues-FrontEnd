@@ -33,7 +33,7 @@ var routes = [
   GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
   GoRoute(
       path: '/view_organization',
-      builder: (context, state) => const ViewOrganization()),
+      builder: (context, state) => const ViewOrganization(loggedIn: true)),
   GoRoute(
       path: '/analysis', builder: (context, state) => const AnalysisScreen()),
   GoRoute(
