@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:clear_avenues/utility/http_assist.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 import 'package:clear_avenues/constants.dart';
@@ -10,7 +9,7 @@ TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 TextEditingController confirmPasswordController = TextEditingController();
 
-List<String> accountType = ["Citizen", "Municipality", "Institute"];
+List<String> accountType = ["standard", "municipality", "institute"];
 String? chosenAccount;
 
 class RegisterScreen extends StatefulWidget {
@@ -139,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     RadioListTile(
-                        title: Text(accountType[0]),
+                        title: const Text("Citizen"),
                         value: accountType[0],
                         groupValue: chosenAccount,
                         onChanged: (String? value) {
@@ -148,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         }),
                     RadioListTile(
-                        title: Text(accountType[1]),
+                        title: const Text("Municipality"),
                         value: accountType[1],
                         groupValue: chosenAccount,
                         onChanged: (String? value) {
@@ -157,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         }),
                     RadioListTile(
-                        title: Text(accountType[2]),
+                        title: const Text("Institute"),
                         value: accountType[2],
                         groupValue: chosenAccount,
                         onChanged: (String? value) {
@@ -194,7 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         port: Constants.serverPort,
         path: '/users/new',
         queryParameters: {
-          'email': emailController.text,
+          'email_address': emailController.text,
           'password': passwordController.text,
           'display_name': nameController.text,
           'account_type': chosenAccount
