@@ -40,7 +40,7 @@ class DevScreen extends StatelessWidget {
               child: const Text('Notification Screen')),
           ElevatedButton(
               //onPressed: () => context.push('/report_info'),
-              onPressed: () => context.goNamed("report_info",
+              onPressed: () => context.pushNamed("report_info",
                   queryParams: {
                     'p1': 'param1',
                     'p2': 'param2',

@@ -39,37 +39,6 @@ Future<void> testGet() async {
   }
 }
 
-Future<bool> loginAuthentication(String email, String password) async {
-  var url = Uri(
-    scheme: 'http',
-    host: appIP,
-    port: appPort,
-    path: '/users/login',
-    queryParameters: {
-      'email_address': email,
-      'password': password,
-    },
-  );
-
-  /*
-  var url = Uri.parse(
-      'http://$appIP/users/login?email_address=$email&password=$password');
-  */
-  var response = await get(url);
-
-  //Currently authentication returns a true if there is a match
-  if (response.body == "true") {
-    return Future<bool>.value(true);
-  }
-  if (kDebugMode) {
-    print(response.body);
-  }
-
-  //Handles basically all error codes, but at the moment on a failed match it returns error code 500
-  return Future<bool>.value(false);
-}
-
-
 // In Progress....
 //final ReportsProvider = StreamProvider<String>((ref) async* {
 // final re
