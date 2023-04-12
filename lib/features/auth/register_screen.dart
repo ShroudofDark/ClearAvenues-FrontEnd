@@ -1,4 +1,6 @@
+import 'package:clear_avenues/features/auth/AuthProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart';
 import 'package:clear_avenues/constants.dart';
@@ -12,14 +14,14 @@ TextEditingController confirmPasswordController = TextEditingController();
 List<String> accountType = ["standard", "municipality", "institute"];
 String? chosenAccount;
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   //Used for validation
   final _formKey = GlobalKey<FormState>();
 
@@ -187,20 +189,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _registerUser() async {
     //If the validation is successful, register user
     if (_formKey.currentState!.validate()) {
-      var url = Uri(
-        scheme: 'http',
-        host: Constants.serverIP,
-        port: Constants.serverPort,
-        path: '/users/new',
-        queryParameters: {
-          'email_address': emailController.text,
-          'password': passwordController.text,
-          'display_name': nameController.text,
-          'account_type': chosenAccount
-        },
-      );
-      Response response = await post(url);
-
+      bool success = await ref.read(authServiceProvider).registerUser(
+          emailController.text,
+          nameController.text,
+          passwordController.text,
+          chosenAccount!);
+      if (context.mounted && success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Registration Complete")));
+      }
       if (context.mounted) {
         context.pop();
       }

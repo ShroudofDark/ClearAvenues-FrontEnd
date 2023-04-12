@@ -1,23 +1,21 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:clear_avenues/widgets/login_form_field.dart';
-import 'package:clear_avenues/utility/http_assist.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
 import '../../widgets/my_scaffold.dart';
-import 'package:clear_avenues/constants.dart';
+import 'AuthProvider.dart';
 
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -84,8 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
           .showSnackBar(const SnackBar(content: Text("Logging in")));
 
       // Add login logic here
-      var success = await loginAuthentication(
-          emailController.text, passwordController.text);
+      var success = await ref
+          .read(authServiceProvider)
+          .loginAuthentication(emailController.text, passwordController.text);
       if (success == true && context.mounted) {
         context.push('/map');
       } else {
@@ -93,38 +92,9 @@ class _LoginScreenState extends State<LoginScreen> {
             .showSnackBar(const SnackBar(content: Text("Unable to Login")));
       }
     }
-
-    //Test code (hitting login makes this appear)
-    //testGet();
   }
 
   void _onRegisterPressed() {
     context.push('/register');
   }
-}
-
-Future<bool> loginAuthentication(String email, String password) async {
-  var url = Uri(
-    scheme: 'http',
-    host: Constants.serverIP,
-    port: Constants.serverPort,
-    path: '/users/login',
-    queryParameters: {
-      'email_address': email,
-      'password': password,
-    },
-  );
-
-  var response = await get(url);
-
-  //Currently authentication returns a true if there is a match
-  if (response.body == "true") {
-    return Future<bool>.value(true);
-  }
-  if (kDebugMode) {
-    print(response.body);
-  }
-
-  //Handles basically all error codes, but at the moment on a failed match it returns error code 500
-  return Future<bool>.value(false);
 }
