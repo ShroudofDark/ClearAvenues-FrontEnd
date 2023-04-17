@@ -47,19 +47,6 @@ var routes = [
   GoRoute(
       path: '/demo_button',
       builder: (context, state) => const DemoButtonScreen()),
-  // GoRoute(
-  //     path: '/report_info',
-  //     builder: (context, state) {
-  //       const s1 = 'test1';
-  //       const s2 = 'test2';
-  //       const s3 = 'test3';
-  //       const s4 = 'test4';
-  //       String p1 = ((state.extra) ?? s1) as String;
-  //       String p2 = ((state.extra) ?? s2) as String;
-  //       String p3 = ((state.extra) ?? s3) as String;
-  //       String p4 = ((state.extra) ?? s4) as String;
-  //       return ReportInfoScreen(ReportType: p1, ReportStatus: p2, ReportTime: p3, ReportDescription: p4);
-  //     }),
   GoRoute(
     name: "report_info",
     path: "/report_info",
@@ -68,6 +55,8 @@ var routes = [
       ReportStatus: state.queryParams['p2'],
       ReportTime: state.queryParams['p3'],
       ReportDecription: state.queryParams['p4'],
+      ReportLat: state.queryParams['p5'],
+      ReportLon: state.queryParams['p6'],
     ),
   )
 ];

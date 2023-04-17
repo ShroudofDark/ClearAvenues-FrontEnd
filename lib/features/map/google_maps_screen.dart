@@ -14,7 +14,7 @@ class MarkersList {
       "lat": 36.88666959507779,
       "lon": -76.306716388986,
       "reportType": "Debris",
-      "reportStatus": "active",
+      "reportStatus": "Active",
       "reportTime": "30 mins ago",
       "reportDescription": "something interesting",
     },
@@ -24,7 +24,7 @@ class MarkersList {
       "lat": 36.88746127841607,
       "lon": -76.30376257566029,
       "reportType": "pothole",
-      "reportStatus": "active",
+      "reportStatus": "Active",
       "reportTime": "10 mins ago",
       "reportDescription": "something interesting",
     },
@@ -34,7 +34,7 @@ class MarkersList {
       "lat": 36.88757122942166,
       "lon": -76.3052626931859,
       "reportType": "missing signage",
-      "reportStatus": "active",
+      "reportStatus": "Inactive",
       "reportTime": "50 mins ago",
       "reportDescription": "something interesting",
     },
@@ -107,7 +107,9 @@ class _MapScreenState extends State<MapScreen> {
                 'p1': temp['reportType'],
                 'p2': temp['reportStatus'],
                 'p3': temp['reportTime'],
-                'p4': temp['reportDescription']
+                'p4': temp['reportDescription'],
+                'p5': temp['lat'].toString(),
+                'p6': temp['lon'].toString(),
               });
             }));
   }

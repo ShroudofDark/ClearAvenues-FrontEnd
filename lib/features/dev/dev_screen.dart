@@ -45,7 +45,9 @@ class DevScreen extends StatelessWidget {
                     'p1': 'param1',
                     'p2': 'param2',
                     'p3': 'param3',
-                    'p4': 'param4'
+                    'p4': 'param4',
+                    'p5': '0.0',
+                    'p6': '0.0'
               }),
               child: const Text('Report Info Screen')),
         ],
