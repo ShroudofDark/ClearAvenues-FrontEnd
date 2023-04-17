@@ -144,7 +144,7 @@ class _MapScreenState extends State<MapScreen> {
                         });
                       },
                       onTap: (tap_latLng) {
-                        context.push("/report", extra: tap_latLng);
+                        reportMethodChoice(context,tap_latLng);
                       }),
                 ],
               );
@@ -174,7 +174,7 @@ class _MapScreenState extends State<MapScreen> {
                     currCoords =
                         LatLng(userLocation.latitude!, userLocation.longitude!);
                     if (context.mounted) {
-                      context.push('/report', extra: currCoords);
+                      reportMethodChoice(context,currCoords);
                     }
                   }
 
@@ -185,7 +185,7 @@ class _MapScreenState extends State<MapScreen> {
                   //If demoing do this
                   else {
                     currCoords = newCurrLoc;
-                    context.push('/report', extra: currCoords);
+                    reportMethodChoice(context,currCoords);
                   }
                 },
               ),
@@ -193,6 +193,52 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+}
+
+//Dismiss dialogue box help
+BuildContext? dcontext;
+dismissDialog() {
+  if (dcontext != null) {
+    Navigator.of(dcontext!).pop();
+  }
+}
+
+
+void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
+  dcontext = context;
+
+  Widget submitButton = TextButton(
+    onPressed: () {
+      dismissDialog();
+      context.push("/report", extra: coordsToUse);
+    },
+    child: const Text("Submit"),
+  );
+  Widget reminderButton = TextButton(
+    onPressed: () {
+      dismissDialog();
+      //TODO Report Later Method
+    },
+    child: const Text("Remind Me Later"),
+  );
+  Widget cancelButton = TextButton(
+    onPressed: () {
+      dismissDialog();
+    },
+    child: const Text("Close"),
+  );
+
+  showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Choose"),
+        content: const Text("Would You Like To Submit a Report Now?"),
+        actions: [
+          submitButton,
+          reminderButton,
+          cancelButton,
+        ],
+      ));
 }
 
 Future<CameraPosition> getUserStartCamera(loc.Location location) async {
