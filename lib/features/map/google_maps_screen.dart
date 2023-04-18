@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
-
 import '../../widgets/navigation_bar.dart';
 import '../dev/demo_assist.dart';
 
@@ -128,7 +128,7 @@ class _MapScreenState extends State<MapScreen> {
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
-              return Text("check error!");
+              return const Text("check error!");
             } else if (snapshot.hasData) {
               return Stack(
                 children: [
@@ -217,7 +217,109 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
   Widget reminderButton = TextButton(
     onPressed: () {
       dismissDialog();
-      //TODO Report Later Method
+      /*
+       * Likely in hindsight a better method of doing this would
+       * be to just ask for "hours from now", pick from drop down, and so
+       * forth. -Jacob
+       */
+      dcontext = context;
+      DateTime selectedDate;
+      //Limits user from picking time before current time
+      DateTime dateLimitMin = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          DateTime.now().hour+1,
+          DateTime.now().minute,
+      );
+      //Limit user from picking something so far out that it makes no sense
+      DateTime dateLimitMax = DateTime (
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day+5,
+        DateTime.now().hour,
+      );
+      DatePicker.showDatePicker(
+        context,
+        dateFormat: 'dd HH:mm',
+        initialDateTime: dateLimitMin,
+        minDateTime: dateLimitMin,
+        maxDateTime: dateLimitMax,
+        onMonthChangeStartWithFirstDate: true,
+        onChange: (dateTime, List<int> index) {
+          selectedDate = dateTime;
+        },
+        pickerTheme: DateTimePickerTheme(
+          titleHeight: 100,
+          title: Container(
+            color: Colors.green,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          dismissDialog();
+                        },
+                        child: const Text('Cancel',
+                          style: TextStyle(fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                    ),
+                    const Text('Select Reminder Time',
+                      style: TextStyle(fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        /**
+                         * At later time this data should be saved locally to build something on device
+                         * to make a notification for the user.
+                         */
+                        //TODO set alarm / notification with selected date
+                        dismissDialog();
+                      },
+                      child: const Text('Done',
+                        style: TextStyle(fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Padding( padding: EdgeInsets.symmetric(vertical: 8.0),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: const [
+                    Text('Day',
+                        style: TextStyle(fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                        ),
+                    ),
+                    Text('Hour',
+                        style: TextStyle(fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                        ),
+                    ),
+                    Text('Minute',
+                        style: TextStyle(fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)
+                    ),
+                  ],
+                ),
+                const Padding( padding: EdgeInsets.symmetric(vertical: 8.0),),
+              ],
+            ),
+          ),
+        ),
+      );
     },
     child: const Text("Remind Me Later"),
   );
@@ -232,7 +334,7 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Choose"),
-        content: const Text("Would You Like To Submit a Report Now?"),
+        content: const Text("Would you like to submit a report now?"),
         actions: [
           submitButton,
           reminderButton,
