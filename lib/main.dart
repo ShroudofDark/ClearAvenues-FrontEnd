@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:clear_avenues/Routes.dart';
+import 'package:clear_avenues/utility/notification_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  settingSetup();
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -20,4 +23,8 @@ class MyApp extends StatelessWidget {
         ),
         routerConfig: _router);
   }
+}
+
+void settingSetup() async {
+  await NotificationService().initialize();
 }

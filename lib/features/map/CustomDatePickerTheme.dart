@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:clear_avenues/utility/notification_service.dart';
+
+DateTime selectedTime = DateTime.now();
 
 class MyDateTimePickerTheme extends DateTimePickerTheme {
+
   MyDateTimePickerTheme(BuildContext context):super(
       titleHeight: 100,
       title: Container(
@@ -35,6 +39,12 @@ class MyDateTimePickerTheme extends DateTimePickerTheme {
                      * to make a notification for the user.
                      */
                     //TODO set alarm / notification with selected date
+                    NotificationService().addNotification(
+                        'Notification Title',
+                        'Notification Body',
+                        selectedTime.millisecondsSinceEpoch,
+                        'testing',
+                    );
                     context.pop();
                   },
                   child: const Text('Done',
