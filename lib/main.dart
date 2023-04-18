@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:clear_avenues/Routes.dart';
 import 'package:clear_avenues/utility/notification_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  settingSetup();
+  await NotificationService().initialize();
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -23,8 +23,4 @@ class MyApp extends StatelessWidget {
         ),
         routerConfig: _router);
   }
-}
-
-void settingSetup() async {
-  await NotificationService().initialize();
 }

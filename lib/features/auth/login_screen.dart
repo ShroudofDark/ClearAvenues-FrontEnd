@@ -90,7 +90,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (success == true && context.mounted) {
         ref.read(userProvider.notifier).setEmail(emailController.text);
         ref.read(userProvider.notifier).setName(nameController.text);
-        ref.read(userProvider.notifier).setEmail(emailController.text);
         context.push('/map');
       } else {
         ScaffoldMessenger.of(context)
