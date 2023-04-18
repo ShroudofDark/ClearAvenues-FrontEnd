@@ -1,3 +1,4 @@
+import 'package:clear_avenues/features/map/CustomDatePickerTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -195,50 +196,31 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-//Dismiss dialogue box help
-BuildContext? dcontext;
-dismissDialog() {
-  if (dcontext != null) {
-    Navigator.of(dcontext!).pop();
-  }
-}
+
 
 
 void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
-  dcontext = context;
 
   Widget submitButton = TextButton(
     onPressed: () {
-      dismissDialog();
+      context.pop();
       context.push("/report", extra: coordsToUse);
     },
     child: const Text("Submit"),
   );
   Widget reminderButton = TextButton(
     onPressed: () {
-      dismissDialog();
+      context.pop();
       /*
        * Likely in hindsight a better method of doing this would
        * be to just ask for "hours from now", pick from drop down, and so
        * forth. -Jacob
        */
-      dcontext = context;
       DateTime selectedDate;
       //Limits user from picking time before current time
-      DateTime dateLimitMin = DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
-          DateTime.now().hour+1,
-          DateTime.now().minute,
-      );
+      DateTime dateLimitMin = DateTime.now();
       //Limit user from picking something so far out that it makes no sense
-      DateTime dateLimitMax = DateTime (
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day+5,
-        DateTime.now().hour,
-      );
+      DateTime dateLimitMax = DateTime.now().copyWith(day: DateTime.now().day+5);
       DatePicker.showDatePicker(
         context,
         dateFormat: 'dd HH:mm',
@@ -249,83 +231,14 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
         onChange: (dateTime, List<int> index) {
           selectedDate = dateTime;
         },
-        pickerTheme: DateTimePickerTheme(
-          titleHeight: 100,
-          title: Container(
-            color: Colors.green,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          dismissDialog();
-                        },
-                        child: const Text('Cancel',
-                          style: TextStyle(fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                    ),
-                    const Text('Select Reminder Time',
-                      style: TextStyle(fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        /**
-                         * At later time this data should be saved locally to build something on device
-                         * to make a notification for the user.
-                         */
-                        //TODO set alarm / notification with selected date
-                        dismissDialog();
-                      },
-                      child: const Text('Done',
-                        style: TextStyle(fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const Padding( padding: EdgeInsets.symmetric(vertical: 8.0),),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
-                    Text('Day',
-                        style: TextStyle(fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                        ),
-                    ),
-                    Text('Hour',
-                        style: TextStyle(fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                        ),
-                    ),
-                    Text('Minute',
-                        style: TextStyle(fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)
-                    ),
-                  ],
-                ),
-                const Padding( padding: EdgeInsets.symmetric(vertical: 8.0),),
-              ],
-            ),
-          ),
-        ),
+        pickerTheme: MyDateTimePickerTheme(context)
       );
     },
     child: const Text("Remind Me Later"),
   );
   Widget cancelButton = TextButton(
     onPressed: () {
-      dismissDialog();
+      context.pop();
     },
     child: const Text("Close"),
   );
