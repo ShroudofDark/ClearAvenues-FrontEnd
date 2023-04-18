@@ -11,7 +11,6 @@ class ViewHistory extends ConsumerStatefulWidget {
 }
 
 class _ViewHistoryState extends ConsumerState<ViewHistory> {
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {

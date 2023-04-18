@@ -118,7 +118,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavBar(),
+      drawer: const NavBar(),
       //Edits where you can start a drag motion to open the side bar
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.05,
       appBar: AppBar(
@@ -144,8 +144,8 @@ class _MapScreenState extends State<MapScreen> {
                           }
                         });
                       },
-                      onTap: (tap_latLng) {
-                        reportMethodChoice(context,tap_latLng);
+                      onTap: (latLng) {
+                        reportMethodChoice(context,latLng);
                       }),
                 ],
               );

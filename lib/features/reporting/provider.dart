@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:clear_avenues/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 
@@ -20,7 +21,7 @@ final reportProvider = StreamProvider<List<Report>>((ref) async* {
         yield reports;
       }
     } catch (err) {
-      print("Error getting reports: ${err.toString()}");
+      debugPrint("Error getting reports: ${err.toString()}");
     }
   }
 });

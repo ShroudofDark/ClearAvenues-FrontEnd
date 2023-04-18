@@ -2,8 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:clear_avenues/widgets/my_scaffold.dart';
-import 'package:clear_avenues/utility/http_assist.dart';
-import 'package:clear_avenues/constants.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -382,18 +380,8 @@ void _onPressSubmit(BuildContext context, List<XFile> imageFileList,
   // selectedCondition.name to get the type
   // description.text to get the description
 
-  var url = Uri(
-    scheme: 'http',
-    host: Constants.serverIP,
-    port: Constants.serverPort,
-    path: '##',
-    queryParameters: {},
-  );
 
-  //Response response = await post(url);
 
-  //Leave Screen Section - Cleanup
-  //description.dispose();
   cheatUpdate.value = 0;
 
   if (context.mounted) {
@@ -404,8 +392,8 @@ void _onPressSubmit(BuildContext context, List<XFile> imageFileList,
 //Get an image from the gallery, can be multiple
 void selectImagesGallery(List<XFile> imageFileList) async {
   final List<XFile> selectedImages = await picker.pickMultiImage();
-  if (selectedImages!.isNotEmpty) {
-    imageFileList!.addAll(selectedImages);
+  if (selectedImages.isNotEmpty) {
+    imageFileList.addAll(selectedImages);
   }
   cheatUpdate.value++;
   dismissDialog();
