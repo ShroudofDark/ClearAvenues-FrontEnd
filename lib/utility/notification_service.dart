@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tzData;
+import 'package:timezone/data/latest.dart' as timezone_data;
 
 
 class NotificationService {
@@ -23,7 +23,7 @@ class NotificationService {
   }
 
   void addNotification(String title, String body, int endTime, String channel) async {
-    tzData.initializeTimeZones();
+    timezone_data.initializeTimeZones();
     final tz.TZDateTime scheduleTime = tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, endTime);
     final AndroidNotificationDetails androidDetail = AndroidNotificationDetails(channel, channel);
     final NotificationDetails noticeDetail = NotificationDetails(android: androidDetail);

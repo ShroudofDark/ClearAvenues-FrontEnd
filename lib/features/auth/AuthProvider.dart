@@ -53,7 +53,7 @@ class AuthService {
         return true;
       }
     } catch (err) {
-      print("Error registering account: ${err.toString()}");
+      debugPrint("Error registering account: ${err.toString()}");
     }
     return false;
   }

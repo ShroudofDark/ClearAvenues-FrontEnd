@@ -51,12 +51,12 @@ var routes = [
     name: "report_info",
     path: "/report_info",
     builder: (context, state) => ReportInfoScreen(
-      ReportType: state.queryParams['p1'],
-      ReportStatus: state.queryParams['p2'],
-      ReportTime: state.queryParams['p3'],
-      ReportDecription: state.queryParams['p4'],
-      ReportLat: state.queryParams['p5'],
-      ReportLon: state.queryParams['p6'],
+      reportType: state.queryParams['p1'],
+      reportStatus: state.queryParams['p2'],
+      reportTime: state.queryParams['p3'],
+      reportDecription: state.queryParams['p4'],
+      reportLat: state.queryParams['p5'],
+      reportLon: state.queryParams['p6'],
     ),
   )
 ];

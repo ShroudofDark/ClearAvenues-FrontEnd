@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ReportInfoScreen extends StatefulWidget {
-  String? ReportType;
-  String? ReportStatus;
-  String? ReportTime;
-  String? ReportDecription;
-  String? ReportLat;
-  String? ReportLon;
+  final String? reportType;
+  final String? reportStatus;
+  final String? reportTime;
+  final String? reportDecription;
+  final String? reportLat;
+  final String? reportLon;
 
 
-  ReportInfoScreen({super.key, this.ReportType, this.ReportStatus,
-    this.ReportTime, this.ReportDecription, this.ReportLat, this.ReportLon});
+  const ReportInfoScreen({super.key, this.reportType, this.reportStatus,
+    this.reportTime, this.reportDecription, this.reportLat, this.reportLon});
 
   // get coordinates => {double.tryParse(ReportLat ?? ''), double.tryParse(ReportLon ?? '')};
 
@@ -30,8 +29,8 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
     super.initState();
 
     //Set Display Text when screen starts
-    var tempLat = double.tryParse(widget.ReportLat as String);
-    var tempLon = double.tryParse(widget.ReportLon as String);
+    var tempLat = double.tryParse(widget.reportLat as String);
+    var tempLon = double.tryParse(widget.reportLon as String);
     _getAddressFromCoords(tempLat as double, tempLon as double);
   }
 
@@ -59,7 +58,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: "${widget.ReportType}\n",
+                    text: "${widget.reportType}\n",
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 16,
@@ -79,10 +78,10 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: "${widget.ReportStatus}\n",
+                    text: "${widget.reportStatus}\n",
                     style: TextStyle(
                       fontSize: 16,
-                        color: (widget.ReportStatus == reportStatusOptions[0]) ? Colors.green : Colors.red,
+                        color: (widget.reportStatus == reportStatusOptions[0]) ? Colors.green : Colors.red,
                     ),
                   ),
                 ],
@@ -99,7 +98,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: "${widget.ReportTime}\n",
+                    text: "${widget.reportTime}\n",
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 16,
@@ -119,7 +118,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: "${widget.ReportLat}\n",
+                    text: "${widget.reportLat}\n",
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 16,
@@ -139,7 +138,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: "${widget.ReportLon}\n",
+                    text: "${widget.reportLon}\n",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
@@ -179,7 +178,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: "${widget.ReportDecription}\n",
+                    text: "${widget.reportDecription}\n",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
@@ -215,18 +214,18 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    print("yes");
+                    debugPrint("yes");
                     // send to info database
                   },
-                  child: Text('Yes'),
+                  child: const Text('Yes'),
                 ),
                 const SizedBox(width: 16), // Add some spacing between the buttons
                 ElevatedButton(
                   onPressed: () {
-                    print("no");
+                    debugPrint("no");
                     // send to info database
                   },
-                  child: Text('no'),
+                  child: const Text('no'),
                 ),
               ]
             ),
