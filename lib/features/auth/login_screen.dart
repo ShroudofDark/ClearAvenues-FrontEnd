@@ -1,3 +1,5 @@
+import 'package:clear_avenues/features/auth/register_screen.dart';
+import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:clear_avenues/widgets/login_form_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,6 +88,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           .read(authServiceProvider)
           .loginAuthentication(emailController.text, passwordController.text);
       if (success == true && context.mounted) {
+        ref.read(userProvider.notifier).setEmail(emailController.text);
+        ref.read(userProvider.notifier).setName(nameController.text);
+        ref.read(userProvider.notifier).setEmail(emailController.text);
         context.push('/map');
       } else {
         ScaffoldMessenger.of(context)

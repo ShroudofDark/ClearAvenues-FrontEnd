@@ -1,17 +1,21 @@
+import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 /* Navigation bar is toolbar that expands from the left screen
  * and provides navigation options for the user in order to access
  * different screens.
  */
 
-class NavBar extends StatelessWidget {
-  NavBar({super.key});
+class NavBar extends ConsumerWidget {
+  const NavBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final user = ref.watch(userProvider);
+    final userName = ref.watch(userProvider).name;
 
     //Variable List
     double drawerWidth = MediaQuery.of(context).size.width * 0.9;
@@ -42,7 +46,7 @@ class NavBar extends StatelessWidget {
       return const Divider(color: Colors.white, thickness: 4, height: 30, indent: 10, endIndent: 50);
     }
 
-    return Container(
+    return SizedBox(
       width: drawerWidth,
       child: Drawer(
         //Determines what is within the drawer widget
@@ -78,12 +82,11 @@ class NavBar extends StatelessWidget {
                   ),
                   accountName: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children:  [
                       Flexible (
                         child: Text(
-                          //TODO Load logged in user name here
-                          "Guest",
-                            style: TextStyle(
+                          userName ?? "Signed Out",
+                            style: const TextStyle(
                               fontSize: 25,
                             ),
                           textAlign: TextAlign.center,
@@ -94,7 +97,7 @@ class NavBar extends StatelessWidget {
                     ],
                   ),
                   // Required for UserAccountsDrawerHeader, but can set null
-                  accountEmail: null,
+                  accountEmail: Text(user.email ?? "")
 
                 ),
               ),

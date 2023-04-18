@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:clear_avenues/Routes.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(ProviderScope(child: MyApp()));
 }
 
