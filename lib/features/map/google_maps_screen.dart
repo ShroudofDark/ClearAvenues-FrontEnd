@@ -216,11 +216,12 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
        * be to just ask for "hours from now", pick from drop down, and so
        * forth. -Jacob
        */
-      DateTime selectedDate;
       //Limits user from picking time before current time
-      DateTime dateLimitMin = DateTime.now();
+      DateTime dateLimitMin = DateTime.now().copyWith(minute: DateTime.now().minute+5);
       //Limit user from picking something so far out that it makes no sense
       DateTime dateLimitMax = DateTime.now().copyWith(day: DateTime.now().day+5);
+      //Set global variable for CustomDatePicker
+      selectedTime = dateLimitMin;
       DatePicker.showDatePicker(
         context,
         dateFormat: 'dd HH:mm',
@@ -229,7 +230,7 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
         maxDateTime: dateLimitMax,
         onMonthChangeStartWithFirstDate: true,
         onChange: (dateTime, List<int> index) {
-          selectedDate = dateTime;
+          selectedTime = dateTime;
         },
         pickerTheme: MyDateTimePickerTheme(context)
       );
