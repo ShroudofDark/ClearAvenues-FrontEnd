@@ -119,7 +119,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    final userName = ref.watch(userProvider).name;
+    final userName = user.name;
 
     return Scaffold(
       drawer: const NavBar(),
@@ -150,7 +150,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       },
                       onTap: (latLng) {
                         if(userName != null) {
-                          reportMethodChoice(context, latLng);
+                          reportMethodChoice(context, latLng, userName);
                         }
                       }),
                 ],
@@ -182,7 +182,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       currCoords =
                           LatLng(userLocation.latitude!, userLocation.longitude!);
                       if (context.mounted) {
-                        reportMethodChoice(context,currCoords);
+                        reportMethodChoice(context, currCoords, userName);
                       }
                     }
                     
@@ -193,7 +193,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     //If demoing do this
                     else {
                       currCoords = newCurrLoc;
-                      reportMethodChoice(context,currCoords);
+                      reportMethodChoice(context, currCoords, userName);
                     }
                   }
                 },
@@ -204,7 +204,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 }
 
-void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
+void reportMethodChoice(BuildContext context, LatLng coordsToUse, String userName) {
 
   Widget submitButton = TextButton(
     onPressed: () {
@@ -227,7 +227,6 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
       DateTime dateLimitMax = DateTime.now().copyWith(day: DateTime.now().day+5);
       //Set global variable for CustomDatePicker
       selectedTime = dateLimitMin;
-      String userName;
       DatePicker.showDatePicker(
         context,
         dateFormat: 'dd HH:mm',
@@ -238,7 +237,7 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
         onChange: (dateTime, List<int> index) {
           selectedTime = dateTime;
         },
-        pickerTheme: MyDateTimePickerTheme(context, )
+        pickerTheme: MyDateTimePickerTheme(context, userName)
       );
     },
     child: const Text("Remind Me Later"),

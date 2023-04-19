@@ -7,7 +7,7 @@ DateTime selectedTime = DateTime.now();
 
 class MyDateTimePickerTheme extends DateTimePickerTheme {
 
-  MyDateTimePickerTheme(BuildContext context):super(
+  MyDateTimePickerTheme(BuildContext context, String userName):super(
       titleHeight: 100,
       title: Container(
         color: Colors.green,
@@ -34,10 +34,11 @@ class MyDateTimePickerTheme extends DateTimePickerTheme {
                 ),
                 TextButton(
                   onPressed: () {
-                    String notiBody = "";
+                    String notificationBody = "$userName remember to report! If you go to your "
+                        "notifications screen you can see the saved information";
                     NotificationService().addNotification(
                         'Reminder to Report',
-                        notiBody,
+                        notificationBody,
                         selectedTime.millisecondsSinceEpoch,
                         'ReportLater',
                     );
