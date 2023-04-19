@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:clear_avenues/models/User.dart';
+import 'package:clear_avenues/providers.dart';
 import 'package:clear_avenues/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +10,7 @@ import 'package:http/http.dart';
 final authServiceProvider = Provider((ref) => AuthService());
 
 class AuthService {
-  Future<bool> loginAuthentication(String email, String password) async {
+  Future<bool> loginAuthentication(String email, String password, WidgetRef ref) async {
     var url = Uri(
       scheme: 'http',
       host: Constants.serverIP,
@@ -22,6 +26,7 @@ class AuthService {
 
     //Currently authentication returns a true if there is a match
     if (response.body == "true") {
+      setUserInformation(email, ref);
       return Future<bool>.value(true);
     }
     if (kDebugMode) {
@@ -30,6 +35,30 @@ class AuthService {
 
     //Handles basically all error codes, but at the moment on a failed match it returns error code 500
     return Future<bool>.value(false);
+  }
+
+  void setUserInformation(String email, WidgetRef ref) async {
+    //Fetch user's information from database
+    var url = Uri(
+      scheme: 'http',
+      host: Constants.serverIP,
+      port: Constants.serverPort,
+      path: '/users/$email',
+      queryParameters: {
+      },
+    );
+    var response = await get(url);
+
+    if(response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+      User temp = User.fromJson(decodedData);
+      ref.read(userProvider.notifier).setEmail(temp.email!);
+      ref.read(userProvider.notifier).setName(temp.name!);
+      ref.read(userProvider.notifier).setAccountType(temp.accountType!);
+    }
+    else {
+      debugPrint("Something Went Wrong");
+    }
   }
 
   Future<bool> registerUser(String email, String displayName, String password,

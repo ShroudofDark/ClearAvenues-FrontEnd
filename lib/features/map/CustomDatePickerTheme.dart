@@ -7,7 +7,7 @@ DateTime selectedTime = DateTime.now();
 
 class MyDateTimePickerTheme extends DateTimePickerTheme {
 
-  MyDateTimePickerTheme(BuildContext context):super(
+  MyDateTimePickerTheme(BuildContext context, String userName):super(
       titleHeight: 100,
       title: Container(
         color: Colors.green,
@@ -34,16 +34,13 @@ class MyDateTimePickerTheme extends DateTimePickerTheme {
                 ),
                 TextButton(
                   onPressed: () {
-                    /**
-                     * At later time this data should be saved locally to build something on device
-                     * to make a notification for the user.
-                     */
-                    //TODO set alarm / notification with selected date
+                    String notificationBody = "$userName remember to report! If you go to your "
+                        "notifications screen you can see the saved information";
                     NotificationService().addNotification(
-                        'Notification Title',
-                        'Notification Body',
+                        'Reminder to Report',
+                        notificationBody,
                         selectedTime.millisecondsSinceEpoch,
-                        'testing',
+                        'ReportLater',
                     );
                     context.pop();
                   },

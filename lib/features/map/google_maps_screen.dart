@@ -1,6 +1,8 @@
 import 'package:clear_avenues/features/map/CustomDatePickerTheme.dart';
+import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
@@ -43,16 +45,15 @@ class MarkersList {
   static int get size => list.length;
 }
 
-class MapScreen extends StatefulWidget {
+class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen> {
   loc.Location location = loc.Location();
-  //loc.LocationData? userLocation;
   late Future cameraPosBuilder;
   late CameraPosition initialCameraPosition;
   bool isLoading = true;
@@ -117,6 +118,9 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final userName = user.name;
+
     return Scaffold(
       drawer: const NavBar(),
       //Edits where you can start a drag motion to open the side bar
@@ -145,7 +149,9 @@ class _MapScreenState extends State<MapScreen> {
                         });
                       },
                       onTap: (latLng) {
-                        reportMethodChoice(context,latLng);
+                        if(userName != null) {
+                          reportMethodChoice(context, latLng, userName);
+                        }
                       }),
                 ],
               );
@@ -168,25 +174,27 @@ class _MapScreenState extends State<MapScreen> {
                 icon: const Icon(Icons.report),
                 label: const Text('Report Unsafe Condition'),
                 onPressed: () {
-                  LatLng currCoords = const LatLng(0, 0);
-                  getCurrCoords() async {
-                    loc.LocationData userLocation =
-                        await location.getLocation();
-                    currCoords =
-                        LatLng(userLocation.latitude!, userLocation.longitude!);
-                    if (context.mounted) {
-                      reportMethodChoice(context,currCoords);
+                  if (userName != null) {
+                    LatLng currCoords = const LatLng(0, 0);
+                    getCurrCoords() async {
+                      loc.LocationData userLocation =
+                          await location.getLocation();
+                      currCoords =
+                          LatLng(userLocation.latitude!, userLocation.longitude!);
+                      if (context.mounted) {
+                        reportMethodChoice(context, currCoords, userName);
+                      }
                     }
-                  }
-
-                  //If not demoing do this
-                  if (!isDemoing) {
-                    getCurrCoords();
-                  }
-                  //If demoing do this
-                  else {
-                    currCoords = newCurrLoc;
-                    reportMethodChoice(context,currCoords);
+                    
+                    //If not demoing do this
+                    if (!isDemoing) {
+                      getCurrCoords();
+                    }
+                    //If demoing do this
+                    else {
+                      currCoords = newCurrLoc;
+                      reportMethodChoice(context, currCoords, userName);
+                    }
                   }
                 },
               ),
@@ -196,10 +204,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-
-
-
-void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
+void reportMethodChoice(BuildContext context, LatLng coordsToUse, String userName) {
 
   Widget submitButton = TextButton(
     onPressed: () {
@@ -217,7 +222,7 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
        * forth. -Jacob
        */
       //Limits user from picking time before current time
-      DateTime dateLimitMin = DateTime.now().copyWith(minute: DateTime.now().minute+5);
+      DateTime dateLimitMin = DateTime.now().copyWith(minute: DateTime.now().minute+1);
       //Limit user from picking something so far out that it makes no sense
       DateTime dateLimitMax = DateTime.now().copyWith(day: DateTime.now().day+5);
       //Set global variable for CustomDatePicker
@@ -232,7 +237,7 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse) {
         onChange: (dateTime, List<int> index) {
           selectedTime = dateTime;
         },
-        pickerTheme: MyDateTimePickerTheme(context)
+        pickerTheme: MyDateTimePickerTheme(context, userName)
       );
     },
     child: const Text("Remind Me Later"),
