@@ -43,91 +43,93 @@ class _ViewOrganizationState extends State<ViewOrganization> {
   }
 
   Widget _buildOrganizationInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          name,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24.0,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24.0,
+            ),
           ),
-        ),
-        const SizedBox(height: 16.0),
-        Text(
-          "Phone: $phone",
-          style: const TextStyle(fontSize: 18.0),
-        ),
-        const SizedBox(height: 8.0),
-        Text(
-          "Email: $email",
-          style: const TextStyle(fontSize: 18.0),
-        ),
-        const SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
+          Text(
+            "Phone: $phone",
+            style: const TextStyle(fontSize: 18.0),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            "Email: $email",
+            style: const TextStyle(fontSize: 18.0),
+          ),
+          const SizedBox(height: 16.0),
 
 
-        Text(
-          nameIn,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24.0,
+          Text(
+            nameIn,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24.0,
+            ),
+      ),
+          const SizedBox(height: 16.0),
+          Text (
+            "Phone: $phoneIn",
+            style: const TextStyle(fontSize: 18.0),
           ),
-    ),
-        const SizedBox(height: 16.0),
-        Text (
-          "Phone: $phoneIn",
-          style: const TextStyle(fontSize: 18.0),
-        ),
-        const SizedBox(height: 8.0),
-        Text(
-          "Email: $emailIn",
-          style: const TextStyle(fontSize: 18.0),
-        ),
-        const SizedBox(height: 16.0),
-        const Text(
-          "Invited Users:",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
+          const SizedBox(height: 8.0),
+          Text(
+            "Email: $emailIn",
+            style: const TextStyle(fontSize: 18.0),
           ),
-        ),
-        const SizedBox(height: 8.0),
-        Column(
-          children: invitedUsers
-              .map(
-                (user) => ListTile(
-              title: Text(user),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    invitedUsers.remove(user);
-                  });
-                },
+          const SizedBox(height: 16.0),
+          const Text(
+            "Invited Users:",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Column(
+            children: invitedUsers
+                .map(
+                  (user) => ListTile(
+                title: Text(user),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      invitedUsers.remove(user);
+                    });
+                  },
+                ),
               ),
-            ),
-          )
-              .toList(),
-        ),
-        const SizedBox(height: 16.0),
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
-            labelText: "Enter email address to invite",
-            errorText: _errorMessage,
+            )
+                .toList(),
           ),
-        ),
-        const SizedBox(height: 16.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: _inviteUser,
-              child: const Text("Invite"),
+          const SizedBox(height: 16.0),
+          TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: "Enter email address to invite",
+              errorText: _errorMessage,
             ),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: _inviteUser,
+                child: const Text("Invite"),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
