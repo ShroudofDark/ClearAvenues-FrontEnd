@@ -34,16 +34,12 @@ class MyDateTimePickerTheme extends DateTimePickerTheme {
                 ),
                 TextButton(
                   onPressed: () {
-                    /**
-                     * At later time this data should be saved locally to build something on device
-                     * to make a notification for the user.
-                     */
-                    //TODO set alarm / notification with selected date
+                    String notiBody = "";
                     NotificationService().addNotification(
-                        'Notification Title',
-                        'Notification Body',
+                        'Reminder to Report',
+                        notiBody,
                         selectedTime.millisecondsSinceEpoch,
-                        'testing',
+                        'ReportLater',
                     );
                     context.pop();
                   },

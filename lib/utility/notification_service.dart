@@ -25,8 +25,15 @@ class NotificationService {
   void addNotification(String title, String body, int endTime, String channel) async {
     timezone_data.initializeTimeZones();
     final tz.TZDateTime scheduleTime = tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, endTime);
-    final AndroidNotificationDetails androidDetail = AndroidNotificationDetails(channel, channel);
+    final AndroidNotificationDetails androidDetail = AndroidNotificationDetails(
+      channel,
+      channel,
+      playSound: true,
+      priority: Priority.high,
+      importance: Importance.high,
+    );
     final NotificationDetails noticeDetail = NotificationDetails(android: androidDetail);
+    //Figure out how to pass an ID based on whats currently in notification queue
     const id = 0;
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
