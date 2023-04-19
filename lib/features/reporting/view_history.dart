@@ -14,7 +14,7 @@ class _ViewHistoryState extends ConsumerState<ViewHistory> {
 
   @override
   Widget build(BuildContext context) {
-    final reportList = ref.watch(reportProvider);
+    final reportList = ref.watch(userReportProvider);
     return MyScaffold(
         body: reportList.when(
             data: (reports) {
@@ -24,8 +24,8 @@ class _ViewHistoryState extends ConsumerState<ViewHistory> {
                   final comment = reports[index].reportComment;
                   final reportType = reports[index].reportType;
                   return ListTile(
-                    title: Text(reportType!),
-                    subtitle: Text(comment!),
+                    title: Text(reportType),
+                    subtitle: Text(comment),
                     trailing: const Icon(Icons.more_vert),
                     isThreeLine: true,
                   );

@@ -9,42 +9,6 @@ import 'package:location/location.dart' as loc;
 import '../../widgets/navigation_bar.dart';
 import '../dev/demo_assist.dart';
 
-class MarkersList {
-  static List<Map<String, dynamic>> list = [
-    {
-      "title": "web center",
-      "id": "1",
-      "lat": 36.88666959507779,
-      "lon": -76.306716388986,
-      "reportType": "Debris",
-      "reportStatus": "Active",
-      "reportTime": "30 mins ago",
-      "reportDescription": "something interesting",
-    },
-    {
-      "title": "dragas hall",
-      "id": "2",
-      "lat": 36.88746127841607,
-      "lon": -76.30376257566029,
-      "reportType": "pothole",
-      "reportStatus": "Active",
-      "reportTime": "10 mins ago",
-      "reportDescription": "something interesting",
-    },
-    {
-      "title": "constant hall",
-      "id": "3",
-      "lat": 36.88757122942166,
-      "lon": -76.3052626931859,
-      "reportType": "missing signage",
-      "reportStatus": "Inactive",
-      "reportTime": "50 mins ago",
-      "reportDescription": "something interesting",
-    },
-  ];
-  static int get size => list.length;
-}
-
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
 
@@ -63,7 +27,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   CameraPosition defaultCameraPosition = const CameraPosition(target: defaultLocation, zoom: 17.0, tilt: 0, bearing: 0);
   */
 
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   List<Marker> allMarkers = [];
 
@@ -74,52 +37,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       initialCameraPosition = await cameraPosBuilder;
       isLoading = false;
     }
-
     setLocation();
-    addCustomIcon();
     super.initState();
   }
 
-  void addCustomIcon() {
-    BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), "assets/images/TrafficCone64.png")
-        .then(
-      (icon) {
-        setState(() {
-          markerIcon = icon;
-        });
-      },
-    );
-  }
 
-  markerBuilder(int index, BuildContext context) {
-    var temp = MarkersList.list[index];
-    return Marker(
-        markerId: MarkerId(temp['id']),
-        draggable: false,
-        icon: markerIcon,
-        position: LatLng(
-          temp['lat'],
-          temp['lon'],
-        ),
-        infoWindow: InfoWindow(
-            title: temp["title"],
-            onTap: () {
-              context.pushNamed("report_info", queryParams: {
-                'p1': temp['reportType'],
-                'p2': temp['reportStatus'],
-                'p3': temp['reportTime'],
-                'p4': temp['reportDescription'],
-                'p5': temp['lat'].toString(),
-                'p6': temp['lon'].toString(),
-              });
-            }));
-  }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final userName = user.name;
+    final markers = ref.watch(markersProvider(context));
 
     return Scaffold(
       drawer: const NavBar(),
@@ -140,14 +68,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   GoogleMap(
                       myLocationEnabled: true,
                       initialCameraPosition: initialCameraPosition,
-                      markers: Set.from(allMarkers),
-                      onMapCreated: (GoogleMapController controller) {
-                        setState(() {
-                          for (var i = 0; i < MarkersList.size; i++) {
-                            allMarkers.add(markerBuilder(i, context));
-                          }
-                        });
-                      },
+                      markers: Set.from(markers.value!),
+
                       onTap: (latLng) {
                         if(userName != null) {
                           reportMethodChoice(context, latLng, userName);
@@ -185,7 +107,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         reportMethodChoice(context, currCoords, userName);
                       }
                     }
-                    
+
                     //If not demoing do this
                     if (!isDemoing) {
                       getCurrCoords();

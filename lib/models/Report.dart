@@ -1,22 +1,23 @@
 class Report {
-  num? reportId;
-  String? reportComment;
-  String? reportDate;
-  String? reportType;
+  late num reportId;
+  late String reportComment;
+  late String reportDate;
+  late String reportType;
   num? reportScore;
   String? resolutionDate;
-  double? reportLocationLatitude;
-  double? reportLocationLongitude;
+  String? reportStatus;
+  late double reportLocationLatitude;
+  late double reportLocationLongitude;
 
   Report(
-      {this.reportId,
-      this.reportComment,
-      this.reportDate,
-      this.reportType,
+      {required this.reportId,
+      required this.reportComment,
+      required this.reportDate,
+      required this.reportType,
       this.reportScore,
       this.resolutionDate,
-      this.reportLocationLatitude,
-      this.reportLocationLongitude});
+      required this.reportLocationLatitude,
+      required this.reportLocationLongitude});
 
   Report.fromJson(Map<String, dynamic> json) {
     reportId = json['reportId'];
@@ -27,6 +28,7 @@ class Report {
     reportLocationLatitude = json['reportLocationLatitude'];
     reportLocationLongitude = json['reportLocationLongitude'];
     reportType = json['reportType'];
+    reportStatus = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +41,7 @@ class Report {
     data['reportLocationLatitude'] = reportLocationLatitude;
     data['reportLocationLongitude'] = reportLocationLongitude;
     data['reportType'] = reportType;
+    data['status'] = reportStatus;
     return data;
   }
 }

@@ -7,7 +7,10 @@ import 'package:http/http.dart';
 
 import '../../models/Report.dart';
 
-final reportProvider = StreamProvider<List<Report>>((ref) async* {
+
+// TODO: Move this logic into a getUserReports function inside ReportService
+// similar to what was done for the provider above
+final userReportProvider = StreamProvider<List<Report>>((ref) async* {
   final user = ref.watch(userProvider);
   while (true) {
     final url = Uri.parse(
