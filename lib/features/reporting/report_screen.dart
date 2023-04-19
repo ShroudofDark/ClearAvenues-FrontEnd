@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:clear_avenues/providers.dart';
+import 'package:clear_avenues/utility/utility.dart';
 import 'package:clear_avenues/widgets/my_scaffold.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,14 +23,14 @@ final cheatUpdate = ValueNotifier<int>(0);
 //Dismiss dialogue box help
 BuildContext? dcontext;
 
-class ReportScreen extends StatefulWidget {
+class ReportScreen extends ConsumerStatefulWidget {
   final LatLng coordinates;
 
   const ReportScreen({Key? key, this.coordinates = const LatLng(0, 0)})
       : super(key: key);
 
   @override
-  State<ReportScreen> createState() => _ReportScreenState();
+  ConsumerState<ReportScreen> createState() => _ReportScreenState();
 }
 
 class UnsafeCondition {
@@ -37,31 +40,31 @@ class UnsafeCondition {
   final Image img;
 }
 
-class _ReportScreenState extends State<ReportScreen> {
+class _ReportScreenState extends ConsumerState<ReportScreen> {
   bool isDriving = false;
 
   //Allows for Images and Other Customization
   List<UnsafeCondition> conditions = [
-    UnsafeCondition("Debris", "debris",
-        Image.asset("assets/images/Debris64.png")),
-    UnsafeCondition("Flooding", "flooding",
-        Image.asset("assets/images/TrafficCone64.png")),
+    UnsafeCondition(
+        "Debris", "debris", Image.asset("assets/images/Debris64.png")),
+    UnsafeCondition(
+        "Flooding", "flooding", Image.asset("assets/images/TrafficCone64.png")),
     UnsafeCondition("Missing Sign", "missing_signage",
         Image.asset("assets/images/MissingSign64.png")),
-    UnsafeCondition("Pothole", "pothole",
-        Image.asset("assets/images/Pothole64.png")),
+    UnsafeCondition(
+        "Pothole", "pothole", Image.asset("assets/images/Pothole64.png")),
     UnsafeCondition("Obstructed Sign", "obstructed_sign",
         Image.asset("assets/images/ObstructedSign64.png")),
     UnsafeCondition("Vehicular Related", "vehicle_accident",
         Image.asset("assets/images/TrafficCone64.png")),
-    UnsafeCondition("Other", "other",
-        Image.asset("assets/images/TrafficCone64.png")),
+    UnsafeCondition(
+        "Other", "other", Image.asset("assets/images/TrafficCone64.png")),
   ];
 
   List<XFile> imageFileList = []; //For multi-images + gallery
   UnsafeCondition? selectedCondition;
   String? _address;
-
+  String? postalCode;
   //Function that converts longitude and latitude to readable address
   //Function modified from:
   // https://medium.com/@fernnandoptr/how-to-get-users-current-location-address-in-flutter-geolocator-geocoding-be563ad6f66a
@@ -70,6 +73,7 @@ class _ReportScreenState extends State<ReportScreen> {
             widget.coordinates.latitude, widget.coordinates.longitude)
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];
+      postalCode = place.postalCode;
       setState(() {
         _address =
             '${place.street}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}';
@@ -291,8 +295,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   }
                 }),
             ElevatedButton(
-              onPressed: () =>
-                  _onPressSubmit(context, imageFileList, selectedCondition),
+              onPressed: () => _onPressSubmit(imageFileList, selectedCondition),
               child: const Text('Submit'),
             ),
           ],
@@ -300,112 +303,95 @@ class _ReportScreenState extends State<ReportScreen> {
       ),
     );
   }
-}
 
-// -----------------------------------------------------------------------
-//                                FUNCTIONS
-// -----------------------------------------------------------------------
+  //Submit the information of the report and leave the report screen
+  void _onPressSubmit(
+      List<XFile> imageFileList, UnsafeCondition? selectedCondition) async {
+    if (selectedCondition == null) {
+      showMySnackbar(context, "Please Select Unsafe Condition Type");
+    } else {
+      bool success = await ref.read(userProvider.notifier).submitReport(
+          selectedCondition.name,
+          description.text,
+          widget.coordinates.latitude.toString(),
+          widget.coordinates.longitude.toString(),
+          postalCode!);
+      if (success && context.mounted) {
+        showMySnackbar(context, "Submission successful.");
+      } else if (context.mounted) {
+        showMySnackbar(context, "Submission error.");
+      }
+    }
 
-dismissDialog() {
-  if (dcontext != null) {
-    Navigator.of(dcontext!).pop();
-  }
-}
+    //Unless there is change in back end, only first image in list will be submitted.
+    //Kept it this way to show that the code is there to future proof it.
 
-//Asks user where they want to grab a photo from and calls methods to fetch those photos
-void _onPressUpload(BuildContext context, List<XFile> imageFileList) {
-  //Set context to pop whenever needed
-  dcontext = context;
+    List<String> encodedImages = [];
+    if (imageFileList.isNotEmpty) {
+      for (var image in imageFileList) {
+        Uint8List bytes = await image.readAsBytes();
+        String convertedImage = base64Encode(bytes);
+        encodedImages.add(convertedImage);
+      }
+    }
 
-  Widget cameraButton = TextButton(
-    onPressed: () => selectImagesCamera(imageFileList),
-    child: const Text("Camera"),
-  );
-  Widget galleryButton = TextButton(
-    onPressed: () => selectImagesGallery(imageFileList),
-    child: const Text("Gallery"),
-  );
-  Widget cancelButton = TextButton(
-    onPressed: () {
-      dismissDialog();
-    },
-    child: const Text("Close"),
-  );
+    cheatUpdate.value = 0;
 
-  showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            title: const Text("Choose"),
-            content: const Text("How would you like to upload an image?"),
-            actions: [
-              cameraButton,
-              galleryButton,
-              cancelButton,
-            ],
-          ));
-}
-
-//Submit the information of the report and leave the report screen
-void _onPressSubmit(BuildContext context, List<XFile> imageFileList,
-    UnsafeCondition? selectedCondition) async {
-  if (selectedCondition == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Please Select Unsafe Condition Type",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            )),
-      ),
-    );
-    return;
-  }
-
-  //Unless there is change in back end, only first image in list will be submitted.
-  //Kept it this way to show that the code is there to future proof it.
-
-  List<String> encodedImages = [];
-  if (imageFileList.isNotEmpty) {
-    for (var image in imageFileList) {
-      Uint8List bytes = await image.readAsBytes();
-      String convertedImage = base64Encode(bytes);
-      encodedImages.add(convertedImage);
+    if (context.mounted) {
+      context.pop();
     }
   }
 
-  //TODO Implement this with proper URL
-  // Below in the parameters when the code is provided they can be access as such:
-  // widget.coordinates.latitude, widget.coordinates.longitude for coordinate submission
-  // encodedImages[0] for first image as a string, if not empty (will need to see what to pass if image is empty)
-  // selectedCondition.name to get the type
-  // description.text to get the description
-
-
-
-  cheatUpdate.value = 0;
-
-  if (context.mounted) {
-    context.pop();
+  //Get an image from the gallery, can be multiple
+  void selectImagesGallery(List<XFile> imageFileList) async {
+    final List<XFile> selectedImages = await picker.pickMultiImage();
+    if (selectedImages.isNotEmpty) {
+      imageFileList.addAll(selectedImages);
+    }
+    cheatUpdate.value++;
+    if (context.mounted) context.pop();
   }
-}
-
-//Get an image from the gallery, can be multiple
-void selectImagesGallery(List<XFile> imageFileList) async {
-  final List<XFile> selectedImages = await picker.pickMultiImage();
-  if (selectedImages.isNotEmpty) {
-    imageFileList.addAll(selectedImages);
-  }
-  cheatUpdate.value++;
-  dismissDialog();
-}
 
 //Get an image from the camera
-void selectImagesCamera(List<XFile> imageFileList) async {
-  final XFile? selectedImage =
-      await picker.pickImage(source: ImageSource.camera);
-  if (selectedImage != null) {
-    imageFileList.add(selectedImage);
+  void selectImagesCamera(List<XFile> imageFileList) async {
+    final XFile? selectedImage =
+        await picker.pickImage(source: ImageSource.camera);
+    if (selectedImage != null) {
+      imageFileList.add(selectedImage);
+    }
+    cheatUpdate.value++;
+    if (context.mounted) context.pop();
   }
-  cheatUpdate.value++;
-  dismissDialog();
+
+  void _onPressUpload(BuildContext context, List<XFile> imageFileList) {
+    //Set context to pop whenever needed
+    dcontext = context;
+
+    Widget cameraButton = TextButton(
+      onPressed: () => selectImagesCamera(imageFileList),
+      child: const Text("Camera"),
+    );
+    Widget galleryButton = TextButton(
+      onPressed: () => selectImagesGallery(imageFileList),
+      child: const Text("Gallery"),
+    );
+    Widget cancelButton = TextButton(
+      onPressed: () {
+        context.pop();
+      },
+      child: const Text("Close"),
+    );
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Choose"),
+              content: const Text("How would you like to upload an image?"),
+              actions: [
+                cameraButton,
+                galleryButton,
+                cancelButton,
+              ],
+            ));
+  }
 }

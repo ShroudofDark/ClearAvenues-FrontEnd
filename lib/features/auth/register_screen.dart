@@ -2,8 +2,6 @@ import 'package:clear_avenues/features/auth/AuthProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
-import 'package:clear_avenues/constants.dart';
 
 //Used to fetch input data
 TextEditingController nameController = TextEditingController();
