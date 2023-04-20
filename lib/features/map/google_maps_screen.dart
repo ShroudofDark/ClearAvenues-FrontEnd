@@ -159,7 +159,7 @@ void reportMethodChoice(BuildContext context, LatLng coordsToUse, String userNam
         onChange: (dateTime, List<int> index) {
           selectedTime = dateTime;
         },
-        pickerTheme: MyDateTimePickerTheme(context, userName)
+        pickerTheme: MyDateTimePickerTheme(context, userName, coordsToUse)
       );
     },
     child: const Text("Remind Me Later"),
