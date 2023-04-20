@@ -12,13 +12,14 @@ import '../../models/Report.dart';
 // similar to what was done for the provider above
 final userReportProvider = StreamProvider<List<Report>>((ref) async* {
   final user = ref.watch(userProvider);
+  final client = ref.read(httpClientProvider);
   while (true) {
     final url = Uri.parse(
         "http://${Constants.serverIP}:${Constants.serverPort}/users/${user.email}/reports");
     List<Report>? reports;
     try {
       await Future.delayed(const Duration(milliseconds: 1000));
-      Response resp = await get(url);
+      Response resp = await client.get(url);
       if (resp.statusCode == 200) {
         Iterable jsonList = json.decode(resp.body);
         reports = List<Report>.from(

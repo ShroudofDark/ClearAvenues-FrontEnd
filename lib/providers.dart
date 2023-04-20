@@ -32,6 +32,7 @@ class UserNotifier extends Notifier<User> {
 
   Future<bool> submitReport(String reportType, String description,
       String latitude, String longitude, String locationId) async {
+    final client = ref.read(httpClientProvider);
     var url = Uri(
         scheme: 'http',
         host: Constants.serverIP,
@@ -44,7 +45,7 @@ class UserNotifier extends Notifier<User> {
           'comment': description,
           'locationId': locationId
         });
-    var response = await post(url);
+    var response = await client.post(url);
     if (response.statusCode == 200) {
       return true;
     }
@@ -52,10 +53,7 @@ class UserNotifier extends Notifier<User> {
     return false;
   }
 }
-
-// Note to Self
-// * Create HTTPClient provider and use this client across entire app for
-// efficiency
+final httpClientProvider = Provider((ref) => Client());
 
 final markersProvider =
     FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
@@ -90,7 +88,7 @@ final markersProvider =
 final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
-    List<Report>? reports = await ReportService.getAllReports();
+    List<Report>? reports = await ReportService.getAllReports(ref);
     if (reports != null) {
       yield reports;
     }

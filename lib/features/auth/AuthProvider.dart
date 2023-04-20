@@ -7,9 +7,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 
-final authServiceProvider = Provider((ref) => AuthService());
+final authServiceProvider = Provider((ref) => AuthService(ref));
 
 class AuthService {
+  final Ref ref;
+  late final Client client;
+  AuthService(this.ref){
+    client = ref.read(httpClientProvider);
+  }
   Future<bool> loginAuthentication(String email, String password, WidgetRef ref) async {
     var url = Uri(
       scheme: 'http',
@@ -22,7 +27,7 @@ class AuthService {
       },
     );
 
-    var response = await get(url);
+    var response = await client.get(url);
 
     //Currently authentication returns a true if there is a match
     if (response.body == "true") {
@@ -47,7 +52,7 @@ class AuthService {
       queryParameters: {
       },
     );
-    var response = await get(url);
+    var response = await client.get(url);
 
     if(response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
@@ -77,7 +82,7 @@ class AuthService {
       },
     );
     try {
-      Response response = await post(url);
+      Response response = await client.post(url);
       if (response.statusCode == 200) {
         return true;
       }
