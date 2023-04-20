@@ -1,13 +1,15 @@
+import 'package:clear_avenues/models/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:clear_avenues/utility/notification_service.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 DateTime selectedTime = DateTime.now();
 
 class MyDateTimePickerTheme extends DateTimePickerTheme {
 
-  MyDateTimePickerTheme(BuildContext context, String userName):super(
+  MyDateTimePickerTheme(BuildContext context, String userName, LatLng coords):super(
       titleHeight: 100,
       title: Container(
         color: Colors.green,
@@ -34,14 +36,16 @@ class MyDateTimePickerTheme extends DateTimePickerTheme {
                 ),
                 TextButton(
                   onPressed: () {
-                    String notificationBody = "$userName remember to report! If you go to your "
-                        "notifications screen you can see the saved information";
+                    String notificationBody = "$userName remember to report! View information under Notifications.";
                     NotificationService().addNotification(
                         'Reminder to Report',
                         notificationBody,
                         selectedTime.millisecondsSinceEpoch,
                         'ReportLater',
                     );
+                    int secondsToNotify =
+                      ((selectedTime.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch)/1000).round();
+                    createReminderNotificationDelayed(coords, secondsToNotify);
                     context.pop();
                   },
                   child: const Text('Done',

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Default Values Stored for Sake of Demo
 MyNotification exampleNotification = MyNotification();
 MyNotification exampleReminderNotification =
-    ReminderNotification(const LatLng(36.886270, -76.309725));
+    ReminderNotification(const LatLng(36.886270, -76.309725), DateTime.now());
 MyNotification exampleUnsafeNotification = UnsafeNotification();
 MyNotification exampleStatusNotification = StatusNotification();
 
@@ -18,6 +19,14 @@ List<MyNotification> defaultList = [
 
 void removeNotification(int index) {
   defaultList.removeAt(index);
+}
+
+void createReminderNotificationDelayed(LatLng location, int timeDelaySeconds) async {
+  debugPrint(timeDelaySeconds.toString());
+  Timer(Duration(seconds: timeDelaySeconds), () {
+    MyNotification exampleTimer = ReminderNotification(location, DateTime.now());
+    defaultList.add(exampleTimer);
+  });
 }
 
 class MyNotification {
@@ -59,9 +68,11 @@ class MyNotification {
 class ReminderNotification extends MyNotification {
   LatLng? locationToReport;
   String address = "Default Location";
+  String receivedTimeString = "Default";
 
-  ReminderNotification(LatLng reminderLoc) {
+  ReminderNotification(LatLng reminderLoc, DateTime receivedTime) {
     locationToReport = reminderLoc;
+    receivedTimeString = receivedTime.toString().substring(0,16);
     setAddress();
     title = "Reminder to Report";
     body = "Click Button to Create Report At:";
@@ -108,7 +119,7 @@ class ReminderNotification extends MyNotification {
                   ))
             ],
           ),
-          subtitle: const Text("Received On: Default"),
+          subtitle: Text("Received On: $receivedTimeString"),
           controlAffinity: ListTileControlAffinity.leading,
           children: [
             Column(
