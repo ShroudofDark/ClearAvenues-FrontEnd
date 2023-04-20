@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'constants.dart';
 import 'features/reporting/ReportService.dart';
 import 'models/Report.dart';
@@ -94,3 +97,43 @@ final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
     }
   }
 });
+
+
+// # From https://gist.github.com/mskasal/326d29626dcd169a4d1b4a142081f6ee
+class PersonLocationProvider extends ChangeNotifier {
+  final Location _location = Location();
+  late final PermissionStatus _permissionGranted;
+  StreamController<LocationData> currentLocation = StreamController.broadcast();
+
+  PersonLocationProvider() {
+    _init();
+  }
+
+  _checkPermission() async {
+    _permissionGranted = await _location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+  }
+
+  _init() {
+    _checkPermission();
+    currentLocation.addStream(_location.onLocationChanged);
+  }
+}
+
+final locationProvider = ChangeNotifierProvider<PersonLocationProvider>((ref) {
+  return PersonLocationProvider();
+});
+
+final locationStreamProvider = StreamProvider.autoDispose<LocationData>(
+      (ref) {
+    ref.keepAlive();
+    final stream = ref.read(locationProvider).currentLocation.stream;
+
+    return stream;
+  },
+);

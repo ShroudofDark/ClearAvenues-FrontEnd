@@ -21,13 +21,11 @@ TextEditingController description = TextEditingController();
 final cheatUpdate = ValueNotifier<int>(0);
 
 //Dismiss dialogue box help
-BuildContext? dcontext;
 
 class ReportScreen extends ConsumerStatefulWidget {
   final LatLng coordinates;
 
-  const ReportScreen({Key? key, this.coordinates = const LatLng(0, 0)})
-      : super(key: key);
+  const ReportScreen({Key? key, required this.coordinates}) : super(key: key);
 
   @override
   ConsumerState<ReportScreen> createState() => _ReportScreenState();
@@ -41,8 +39,6 @@ class UnsafeCondition {
 }
 
 class _ReportScreenState extends ConsumerState<ReportScreen> {
-  bool isDriving = false;
-
   //Allows for Images and Other Customization
   List<UnsafeCondition> conditions = [
     UnsafeCondition(
@@ -63,32 +59,30 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
 
   List<XFile> imageFileList = []; //For multi-images + gallery
   UnsafeCondition? selectedCondition;
-  String? _address;
   String? postalCode;
   //Function that converts longitude and latitude to readable address
   //Function modified from:
   // https://medium.com/@fernnandoptr/how-to-get-users-current-location-address-in-flutter-geolocator-geocoding-be563ad6f66a
-  Future<void> _getAddressFromCoords() async {
-    await placemarkFromCoordinates(
-            widget.coordinates.latitude, widget.coordinates.longitude)
+  Future<String> _getAddressFromCoords(LatLng coords) async {
+    String address = "";
+    await placemarkFromCoordinates(coords.latitude, coords.longitude)
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];
       postalCode = place.postalCode;
-      setState(() {
-        _address =
-            '${place.street}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}';
-      });
+      address =
+          '${place.street}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}';
     });
+    return address;
   }
 
   @override
   void initState() {
     super.initState();
-    _getAddressFromCoords(); //Set Display Text when screen starts
   }
 
   @override
   Widget build(BuildContext context) {
+    final coords = widget.coordinates;
     return MyScaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -104,10 +98,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     ),
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                          target: widget.coordinates,
-                          zoom: 20.0,
-                          tilt: 0,
-                          bearing: 0),
+                          target: coords, zoom: 20.0, tilt: 0, bearing: 0),
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
 
@@ -121,7 +112,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                         Marker(
                           markerId: const MarkerId("location"),
                           draggable: false,
-                          position: widget.coordinates,
+                          position: coords,
                           infoWindow:
                               const InfoWindow(title: "location of issue"),
                         ),
@@ -140,14 +131,22 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     border: Border.all(width: 3.0),
                     color: Colors.white,
                   ),
-                  child: Text(
-                    "$_address",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: FutureBuilder(
+                      future: _getAddressFromCoords(coords),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            snapshot.data as String,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      }),
                 ),
               ],
             ),
@@ -365,7 +364,6 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
 
   void _onPressUpload(BuildContext context, List<XFile> imageFileList) {
     //Set context to pop whenever needed
-    dcontext = context;
 
     Widget cameraButton = TextButton(
       onPressed: () => selectImagesCamera(imageFileList),
