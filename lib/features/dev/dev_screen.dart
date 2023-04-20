@@ -50,6 +50,9 @@ class DevScreen extends StatelessWidget {
                     'p6': '0.0'
               }),
               child: const Text('Report Info Screen')),
+          ElevatedButton(
+             onPressed: () => context.push('/accountInfo'),
+              child: const Text('User Account Information')),
         ],
       ),
     ));

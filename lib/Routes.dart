@@ -10,6 +10,7 @@ import 'package:clear_avenues/features/account/notification_screen.dart';
 import 'package:clear_avenues/features/auth/register_screen.dart';
 import 'package:clear_avenues/features/reporting/report_screen.dart';
 import 'package:clear_avenues/features/account/setting_screen.dart';
+import 'package:clear_avenues/features/account/account_info.dart';
 import 'package:clear_avenues/features/reporting/view_history.dart';
 import 'package:clear_avenues/features/account/view_organization.dart';
 import 'package:clear_avenues/features/reporting/report_info.dart';
@@ -31,6 +32,7 @@ var routes = [
       }), // report coordinates default to 0.0,0.0 when not entering through map screen tap
   GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
   GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
+  GoRoute(path: '/accountInfo', builder: (context, state) => const AccountInfoScreen()),
   GoRoute(
       path: '/view_organization',
       builder: (context, state) => const ViewOrganization(loggedIn: true)),
