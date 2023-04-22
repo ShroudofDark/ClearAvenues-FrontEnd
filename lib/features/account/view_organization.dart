@@ -14,9 +14,9 @@ class _ViewOrganizationState extends State<ViewOrganization> {
   final String phone = "123-456-7890";
   final String email = "contact@norfolkva.org\n\n";
 
-  final String nameIn = "Old Dominion University ";
+  final String nameIn = "Federal Highway Administration";
   final String phoneIn = "757-6833192";
-  final String emailIn = "itshelp@odu.edu";
+  final String emailIn = "fhwaHelp@us.gov";
 
   final List<String> invitedUsers = [];
   final TextEditingController _emailController = TextEditingController();
