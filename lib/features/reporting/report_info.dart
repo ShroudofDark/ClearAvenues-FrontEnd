@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ReportInfoScreen extends StatefulWidget {
   final String? reportType;
@@ -24,6 +25,8 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
 
   List<String> reportStatusOptions = ["Active", "Inactive"];
 
+  late final coords;
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +34,10 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
     //Set Display Text when screen starts
     var tempLat = double.tryParse(widget.reportLat as String);
     var tempLon = double.tryParse(widget.reportLon as String);
-    _getAddressFromCoords(tempLat as double, tempLon as double);
+
+    _getAddressFromCoords();
+
+    coords = LatLng(tempLat!, tempLon!);
   }
 
 
@@ -48,44 +54,52 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
           children: [
 
             const SizedBox(height: 24.0),
-            RichText(
-              text: TextSpan(
-                text: "Report Type: ",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                    text: "${widget.reportType}\n",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
-            RichText(
-              text: TextSpan(
-                text: "Report Status: ",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                    text: "${widget.reportStatus}\n",
-                    style: TextStyle(
-                      fontSize: 16,
-                        color: (widget.reportStatus == reportStatusOptions[0]) ? Colors.green : Colors.red,
+            Row(
+              children: [
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Report Type: ",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "${widget.reportType}\n",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Report Status: ",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "${widget.reportStatus}\n",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: (widget.reportStatus == reportStatusOptions[0]) ? Colors.green : Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             RichText(
@@ -108,65 +122,138 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
               ),
             ),
 
-            RichText(
-              text: TextSpan(
-                text: "Report Latitude: ",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                    text: "${widget.reportLat}\n",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(width: 3.0),
+                color: Colors.white,
               ),
+              child: FutureBuilder<String?>(
+                future: _getCoordsText(),
+                builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data!);
+                    } else {
+                      return Text(
+                        _address!,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              )
             ),
 
-            RichText(
-              text: TextSpan(
-                text: "Report Longitude: ",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                    text: "${widget.reportLon}\n",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
+            Stack(
+              children: [
+                SizedBox(
+                    height: 250,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3.0, color: Colors.green),
+                      ),
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                            target: coords, zoom: 20.0, tilt: 0, bearing: 0),
+                        myLocationButtonEnabled: false,
+                        zoomControlsEnabled: false,
+
+                        //disables movement of map
+                        zoomGesturesEnabled: false,
+                        scrollGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
+
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId("location"),
+                            draggable: false,
+                            position: coords,
+                            infoWindow:
+                            const InfoWindow(title: "location of issue"),
+                          ),
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          controller
+                              .showMarkerInfoWindow(const MarkerId("location"));
+                        },
+                      ),
                     ),
                   ),
-                ],
-              ),
+                // Top layer text
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        RichText(
+                          text: TextSpan(
+                            text: "Latitude: ",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "${coords.latitude.toStringAsFixed(6)}\n",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                  ),
+                ),
+
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: "Longitude: ",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: "${coords.longitude.toStringAsFixed(6)}\n",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+
+              ],
             ),
 
-            RichText(
-              text: TextSpan(
-                text: "Report Location: \n",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                    text: "$_address\n",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 24.0),
 
             RichText(
               text: TextSpan(
@@ -215,7 +302,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ElevatedButton(
                   onPressed: () {
                     debugPrint("yes");
-                    // send to info database
+                    // TODO send to request database
                   },
                   child: const Text('Yes'),
                 ),
@@ -223,7 +310,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                 ElevatedButton(
                   onPressed: () {
                     debugPrint("no");
-                    // send to info database
+                    // TODO send to request database
                   },
                   child: const Text('no'),
                 ),
@@ -235,18 +322,18 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
     );
   }
 
-  Future<String> getAddress(double latitude, double longitude) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
-      Placemark place = placemarks[0];
-      String address = '${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}';
-      return address;
-    } catch (e) {
-      return 'Could not get address';
+  Future<String?> _getCoordsText() async {
+    if (coords == null) {
+      return null;
+    } else {
+      return coords;
     }
   }
 
-  Future<void> _getAddressFromCoords(double tempLat, double tempLon) async {
+  Future<void> _getAddressFromCoords() async {
+    var tempLat = double.tryParse(widget.reportLat as String) as double;
+    var tempLon = double.tryParse(widget.reportLon as String) as double;
+
     await placemarkFromCoordinates(tempLat, tempLon)
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];

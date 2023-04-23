@@ -46,8 +46,8 @@ class DevScreen extends StatelessWidget {
                     'p2': 'param2',
                     'p3': 'param3',
                     'p4': 'param4',
-                    'p5': '0.0',
-                    'p6': '0.0'
+                    'p5': '36.88666959507779', //for testing
+                    'p6': '-76.306716388986'
               }),
               child: const Text('Report Info Screen')),
           ElevatedButton(
