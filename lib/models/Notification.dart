@@ -8,8 +8,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 MyNotification exampleNotification = MyNotification();
 MyNotification exampleReminderNotification =
     ReminderNotification(const LatLng(36.886270, -76.309725), DateTime.now());
-MyNotification exampleUnsafeNotification = UnsafeNotification();
-MyNotification exampleStatusNotification = StatusNotification();
+MyNotification exampleUnsafeNotification =
+    UnsafeNotification(const LatLng(36.88538, -76.31266),DateTime.now(),"Missing Sign");
+MyNotification exampleStatusNotification =
+    StatusNotification(const LatLng(36.88704, -76.31275),DateTime.now(),
+        "The City of Norfolk","Fire in Process of Being Put Out");
 
 List<MyNotification> defaultList = [
   exampleReminderNotification,
@@ -160,15 +163,205 @@ class ReminderNotification extends MyNotification {
 }
 
 class UnsafeNotification extends MyNotification {
+  LatLng? unsafeConditionLocation;
+  String unsafeConditionType = "Default Type";
+  String address = "Default Location";
+  String receivedTimeString = "Default Time";
+
+  UnsafeNotification(LatLng conditionLoc, DateTime receivedTime, String conditionType) {
+    unsafeConditionLocation = conditionLoc;
+    receivedTimeString = receivedTime.toString().substring(0,16);
+    unsafeConditionType = conditionType;
+    setAddress();
+    title = "Nearby Unsafe Condition";
+    body = "$unsafeConditionType reported at:";
+  }
+
+  setAddress() async {
+    List<Placemark> location = await placemarkFromCoordinates(
+        unsafeConditionLocation!.latitude, unsafeConditionLocation!.longitude);
+    address =
+    '${location[0].street}, ${location[0].locality}, ${location[0].administrativeArea} ${location[0].postalCode}';
+  }
+
   @override
   Widget displayNotification(int index, BuildContext context) {
-    return const Text("Default Unsafe Condition");
+    return Container(
+      color: Colors.red[800],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: ExpansionTile(
+          iconColor: Colors.white,
+          textColor: Colors.white,
+          collapsedIconColor: Colors.white,
+          collapsedTextColor: Colors.white,
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    removeNotification(index);
+                  },
+                  child: Row(
+                    children: const [
+                      Icon(Icons.delete),
+                      Text("Delete"),
+                    ],
+                  ))
+            ],
+          ),
+          subtitle: Text("Received On: $receivedTimeString"),
+          controlAffinity: ListTileControlAffinity.leading,
+          children: [
+            Column(
+              children: [
+                Divider(
+                  thickness: 2,
+                  color: Colors.red[300],
+                ),
+                Text(
+                  body!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white70,
+                  ),
+                ),
+                Text(
+                  address,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: () {
+                      //TODO should I push this to a report info screen or just the map?
+                    },
+                    child: const Text("View Condition")),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
 class StatusNotification extends MyNotification {
+  LatLng? reportLocation;
+  String address = "Default Location";
+  String receivedTimeString = "Default Time";
+  String statusUpdater = "Default Name";
+  String updatedStatus = "Default Status";
+
+  //Passing in a name as it makes it easier to 'store' who did the update when its displayed
+  StatusNotification(LatLng reportLoc, DateTime receivedTime, String updater, String newStatus) {
+    reportLocation = reportLoc;
+    receivedTimeString = receivedTime.toString().substring(0,16);
+    statusUpdater = updater;
+    updatedStatus = newStatus;
+    setAddress();
+    title = "Status Update to Report";
+    body = "$statusUpdater updated report at:";
+  }
+
+  setAddress() async {
+    List<Placemark> location = await placemarkFromCoordinates(
+        reportLocation!.latitude, reportLocation!.longitude);
+    address =
+    '${location[0].street}, ${location[0].locality}, ${location[0].administrativeArea} ${location[0].postalCode}';
+  }
+
   @override
   Widget displayNotification(int index, BuildContext context) {
-    return const Text("Default Status Update");
+    return Container(
+      color: Colors.purple[800],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: ExpansionTile(
+          iconColor: Colors.white,
+          textColor: Colors.white,
+          collapsedIconColor: Colors.white,
+          collapsedTextColor: Colors.white,
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    removeNotification(index);
+                  },
+                  child: Row(
+                    children: const [
+                      Icon(Icons.delete),
+                      Text("Delete"),
+                    ],
+                  ))
+            ],
+          ),
+          subtitle: Text("Received On: $receivedTimeString"),
+          controlAffinity: ListTileControlAffinity.leading,
+          children: [
+            Column(
+              children: [
+                Divider(
+                  thickness: 2,
+                  color: Colors.purple[300],
+                ),
+                Text(
+                  body!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white70,
+                  ),
+                ),
+                Text(
+                  address,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 16,),
+                Text(
+                  "\"$updatedStatus\"",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: () {
+                      //TODO should I push this to a report info screen or just the map?
+                    },
+                    child: const Text("View Report")),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
