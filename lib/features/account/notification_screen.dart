@@ -11,24 +11,6 @@ class NotificationScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationScreenState extends ConsumerState<NotificationScreen> {
-  final List<Map<String, String>> _notifications = [
-    {
-      "title": "Alert of Nearby Unsafe Condition",
-      "details": "Details about the Alert of Nearby Unsafe Condition"
-    },
-    {
-      "title": "Reminder To Report",
-      "details": "Details about the Reminder To Report"
-    },
-    {
-      "title": "Invitation To Organization",
-      "details": "Details about the Invitation To Organization"
-    },
-    {
-      "title": "Status Update on Report",
-      "details": "Details about the Status Update on Report"
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +37,15 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
             }
           }
         ),
-      //TODO below button is for debugging
+      // Add This if you want to debug adding notifications
+        /*
       floatingActionButton: ElevatedButton(
           child: const Text("Add Notification"),
           onPressed: () {
             defaultList.add(exampleNotification);
           },
         ),
+        */
       );
     }
     //User isn't logged in
