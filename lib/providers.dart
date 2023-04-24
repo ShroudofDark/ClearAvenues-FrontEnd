@@ -73,6 +73,7 @@ final markersProvider =
       const ImageConfiguration(), "assets/images/TrafficCone64.png");
   final reportList = ref.watch(allReportsProvider);
   var reports = reportList.value;
+  /*
   var markers = reports?.map((markerInfo) => Marker(
       markerId: MarkerId(markerInfo.reportId.toString()),
       draggable: false,
@@ -82,10 +83,10 @@ final markersProvider =
       ),
       icon: markerIcon,
       infoWindow: InfoWindow(
-          title: markerInfo.reportComment,
+          title: convertType(markerInfo.reportType),
           onTap: () {
             context.pushNamed("report_info", queryParams: {
-              'p1': markerInfo.reportType,
+              'p1': convertType(markerInfo.reportType),
               'p2': markerInfo.reportStatus,
               'p3': markerInfo.reportDate,
               'p4': markerInfo.reportComment,
@@ -93,9 +94,68 @@ final markersProvider =
               'p6': markerInfo.reportLocationLongitude.toString(),
             });
           })));
+  */
+  var markers = reports?.map((markerInfo)  {
+    String readableReportType = convertType(markerInfo.reportType);
+
+    /* Right now there is an issue where it flash between the initial set icon
+     * and the icon it gets set to... though it technically sets it?
+    setMarkerIcon() async {
+        markerIcon = await getMapMarker(markerInfo.reportType);
+    }
+    setMarkerIcon();
+    */
+    return Marker(
+      markerId: MarkerId(markerInfo.reportId.toString()),
+      draggable: false,
+      position: LatLng(
+        markerInfo.reportLocationLatitude,
+        markerInfo.reportLocationLongitude,
+      ),
+      icon: markerIcon,
+      infoWindow: InfoWindow(
+          title: readableReportType,
+          onTap: () {
+            context.pushNamed("report_info", queryParams: {
+              'p1': readableReportType,
+              'p2': markerInfo.reportStatus,
+              'p3': markerInfo.reportDate,
+              'p4': markerInfo.reportComment,
+              'p5': markerInfo.reportLocationLatitude.toString(),
+              'p6': markerInfo.reportLocationLongitude.toString(),
+            });
+          }));
+  });
+
   if (markers != null) return markers;
   return <Marker>{};
 });
+
+//Temporary at the moment until I talk to Keshaun more about this
+Future<BitmapDescriptor> getMapMarker(String? reportType) async {
+  BitmapDescriptor markerImage = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(), "assets/images/Pothole64.png");
+  return markerImage;
+}
+//Converts the report types into readable versions
+String convertType(String? reportType) {
+  switch (reportType) {
+    case "missing_signage":
+      return "Missing Sign";
+    case "debris":
+      return "Debris";
+    case "flooding":
+      return "Flooding";
+    case "pothole":
+      return "Pothole";
+    case "obstructed_sign":
+      return "Obstructed Sign";
+    case "vehicle_accident":
+      return "Vehicular Related";
+    default:
+      return "Other";
+  }
+}
 
 final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
   while (true) {
@@ -174,7 +234,8 @@ class SavedNotifications extends Notifier<List<MyNotification>> {
 final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
-    List<Association>? associations = await AnalysisService.getAllAssociations(ref);
+    List<Association>? associations =
+        await AnalysisService.getAllAssociations(ref);
     if (associations != null) {
       yield associations;
     }
