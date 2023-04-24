@@ -24,11 +24,7 @@ class ReportMethodDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            /*
-       * Likely in hindsight a better method of doing this would
-       * be to just ask for "hours from now", pick from drop down, and so
-       * forth. -Jacob
-       */
+            context.pop();
             //Limits user from picking time before current time
             DateTime dateLimitMin =
                 DateTime.now().copyWith(minute: DateTime.now().minute + 1);

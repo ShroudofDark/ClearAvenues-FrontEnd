@@ -32,7 +32,7 @@ class UserNotifier extends Notifier<User> {
   }
 
   void setAccountType(String type) {
-    state.copyWith(accountType: type);
+    state = state.copyWith(accountType: type);
   }
 
   Future<bool> submitReport(String reportType, String description,
