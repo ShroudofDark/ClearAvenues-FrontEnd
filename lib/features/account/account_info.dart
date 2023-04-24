@@ -1,12 +1,14 @@
+import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-
-class AccountInfoScreen extends StatelessWidget {
+class AccountInfoScreen extends ConsumerWidget {
   const AccountInfoScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account Information'),
@@ -23,10 +25,9 @@ class AccountInfoScreen extends StatelessWidget {
                 fontSize: 16.0,
               ),
             ),
-            const Text(
-              //TODO: logic to display email Address
-              'user@example.com',
-              style: TextStyle(
+            Text(
+              "${user.email}",
+              style: const TextStyle(
                 fontSize: 16.0,
               ),
             ),
@@ -38,10 +39,9 @@ class AccountInfoScreen extends StatelessWidget {
                 fontSize: 16.0,
               ),
             ),
-            const Text(
-              //TODO: logic to display the Account Type
-              'Premium',
-              style: TextStyle(
+            Text(
+              "${user.accountType}",
+              style: const TextStyle(
                 fontSize: 16.0,
               ),
             ),
@@ -71,7 +71,6 @@ class AccountInfoScreen extends StatelessWidget {
                 hintText: 'New Password',
               ),
             ),
-
             const SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: () {
@@ -85,6 +84,4 @@ class AccountInfoScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }

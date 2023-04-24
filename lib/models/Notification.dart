@@ -1,174 +1,37 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Default Values Stored for Sake of Demo
-MyNotification exampleNotification = MyNotification();
-MyNotification exampleReminderNotification =
-    ReminderNotification(const LatLng(36.886270, -76.309725), DateTime.now());
-MyNotification exampleUnsafeNotification = UnsafeNotification();
-MyNotification exampleStatusNotification = StatusNotification();
+//MyNotification exampleNotification = MyNotification();
+//MyNotification exampleReminderNotification =
+//    ReminderNotification(const LatLng(36.886270, -76.309725), DateTime.now());
+//MyNotification exampleUnsafeNotification = UnsafeNotification();
+//MyNotification exampleStatusNotification = StatusNotification();
 
-List<MyNotification> defaultList = [
-  exampleReminderNotification,
-  exampleUnsafeNotification,
-  exampleStatusNotification
-];
-
-void removeNotification(int index) {
-  defaultList.removeAt(index);
-}
-
-void createReminderNotificationDelayed(LatLng location, int timeDelaySeconds) async {
-  debugPrint(timeDelaySeconds.toString());
-  Timer(Duration(seconds: timeDelaySeconds), () {
-    MyNotification exampleTimer = ReminderNotification(location, DateTime.now());
-    defaultList.add(exampleTimer);
-  });
-}
+//List<MyNotification> defaultList = [
+// NotificationWidget("Example Notification", "Default title"),
+//exampleUnsafeNotification,
+// exampleStatusNotification
+//];
 
 class MyNotification {
-  String? title;
-  String? body;
-
-  MyNotification() {
-    title = "Default Type";
-    body = "Default Body";
+  final String title;
+  final LatLng locationToReport;
+  final String receivedTimeString;
+  String address;
+  MyNotification([
+    this.title = "Default Notification To Report",
+    this.locationToReport = const LatLng(36.886270, -76.309725),
+    this.receivedTimeString = "January 1st, 2000",
+    this.address = "France House, Norfolk, Virginia 23529",
+  ]) {
+    getAddress(locationToReport);
   }
 
-  Widget displayNotification(int index, BuildContext context) {
-    return Container(
-      color: Colors.purple[300],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: ExpansionTile(
-          iconColor: Colors.white,
-          textColor: Colors.white,
-          collapsedIconColor: Colors.white,
-          collapsedTextColor: Colors.white,
-          title: Text(
-            title!,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-          controlAffinity: ListTileControlAffinity.leading,
-          children: [
-            Text(body!),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ReminderNotification extends MyNotification {
-  LatLng? locationToReport;
-  String address = "Default Location";
-  String receivedTimeString = "Default";
-
-  ReminderNotification(LatLng reminderLoc, DateTime receivedTime) {
-    locationToReport = reminderLoc;
-    receivedTimeString = receivedTime.toString().substring(0,16);
-    setAddress();
-    title = "Reminder to Report";
-    body = "Click Button to Create Report At:";
-  }
-
-  setAddress() async {
-    List<Placemark> location = await placemarkFromCoordinates(
-        locationToReport!.latitude, locationToReport!.longitude);
+  void getAddress(LatLng coords) async {
+    List<Placemark> location =
+        await placemarkFromCoordinates(coords.latitude, coords.longitude);
     address =
         '${location[0].street}, ${location[0].locality}, ${location[0].administrativeArea} ${location[0].postalCode}';
-  }
-
-  @override
-  Widget displayNotification(int index, BuildContext context) {
-    return Container(
-      color: Colors.cyan,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: ExpansionTile(
-          iconColor: Colors.white,
-          textColor: Colors.white,
-          collapsedIconColor: Colors.white,
-          collapsedTextColor: Colors.white,
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    removeNotification(index);
-                  },
-                  child: Row(
-                    children: const [
-                      Icon(Icons.delete),
-                      Text("Delete"),
-                    ],
-                  ))
-            ],
-          ),
-          subtitle: Text("Received On: $receivedTimeString"),
-          controlAffinity: ListTileControlAffinity.leading,
-          children: [
-            Column(
-              children: [
-                Divider(
-                  thickness: 2,
-                  color: Colors.cyan[300],
-                ),
-                Text(
-                  body!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white70,
-                  ),
-                ),
-                Text(
-                  address,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white70,
-                  ),
-                ),
-                const SizedBox(height: 10,),
-                ElevatedButton(
-                    onPressed: () {
-                      context.push('/report', extra: locationToReport);
-                    },
-                    child: const Text("Create Report")),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class UnsafeNotification extends MyNotification {
-  @override
-  Widget displayNotification(int index, BuildContext context) {
-    return const Text("Default Unsafe Condition");
-  }
-}
-
-class StatusNotification extends MyNotification {
-  @override
-  Widget displayNotification(int index, BuildContext context) {
-    return const Text("Default Status Update");
   }
 }

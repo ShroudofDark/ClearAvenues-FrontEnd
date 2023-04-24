@@ -261,7 +261,7 @@ packages:
     source: git
     version: "2.3.0"
   google_maps_flutter_web:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "packages/google_maps_flutter/google_maps_flutter_web"
       ref: google-maps-heatmaps

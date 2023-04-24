@@ -1,6 +1,6 @@
 import 'package:clear_avenues/features/reporting/provider.dart';
-import 'package:flutter/material.dart';
 import 'package:clear_avenues/widgets/my_scaffold.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ViewHistory extends ConsumerStatefulWidget {
@@ -11,7 +11,6 @@ class ViewHistory extends ConsumerStatefulWidget {
 }
 
 class _ViewHistoryState extends ConsumerState<ViewHistory> {
-
   @override
   Widget build(BuildContext context) {
     final reportList = ref.watch(userReportProvider);
@@ -24,6 +23,9 @@ class _ViewHistoryState extends ConsumerState<ViewHistory> {
                   final comment = reports[index].reportComment;
                   final reportType = reports[index].reportType;
                   return ListTile(
+                    tileColor: reports[index].reportStatus == "submitted"
+                        ? Colors.red
+                        : Colors.green,
                     title: Text(reportType),
                     subtitle: Text(comment),
                     trailing: const Icon(Icons.more_vert),

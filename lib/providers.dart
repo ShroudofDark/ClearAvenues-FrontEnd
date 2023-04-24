@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:clear_avenues/models/User.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
-import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+
 import 'constants.dart';
 import 'features/reporting/ReportService.dart';
+import 'models/Notification.dart';
 import 'models/Report.dart';
 
 final userProvider = NotifierProvider<UserNotifier, User>(() {
@@ -56,6 +58,7 @@ class UserNotifier extends Notifier<User> {
     return false;
   }
 }
+
 final httpClientProvider = Provider((ref) => Client());
 
 final markersProvider =
@@ -98,7 +101,6 @@ final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
   }
 });
 
-
 // # From https://gist.github.com/mskasal/326d29626dcd169a4d1b4a142081f6ee
 class PersonLocationProvider extends ChangeNotifier {
   final Location _location = Location();
@@ -130,10 +132,35 @@ final locationProvider = ChangeNotifierProvider<PersonLocationProvider>((ref) {
 });
 
 final locationStreamProvider = StreamProvider.autoDispose<LocationData>(
-      (ref) {
+  (ref) {
     ref.keepAlive();
     final stream = ref.read(locationProvider).currentLocation.stream;
 
     return stream;
   },
 );
+
+final savedNotificationsProvider =
+    NotifierProvider<SavedNotifications, List<MyNotification>>(() {
+  return SavedNotifications();
+});
+
+class SavedNotifications extends Notifier<List<MyNotification>> {
+  // Sets up a default notification when app loads
+
+  @override
+  build() {
+    return [MyNotification()];
+  }
+
+  void addNotification(MyNotification notif) {
+    state = [...state, notif];
+  }
+
+  void removeNotification(int index) {
+    state = state..removeAt(index);
+    ref.notifyListeners();
+  }
+
+  int length() => state.length;
+}
