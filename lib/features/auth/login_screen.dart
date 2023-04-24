@@ -86,7 +86,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           .read(authServiceProvider)
           .loginAuthentication(emailController.text, passwordController.text, ref);
       if (success == true && context.mounted) {
-        context.push('/map');
+        emailController.clear();
+        passwordController.clear();
+        context.pop();
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Unable to Login")));

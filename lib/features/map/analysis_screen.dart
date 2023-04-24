@@ -1,35 +1,113 @@
+import 'package:clear_avenues/features/dev/demo_assist.dart';
+import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart' as loc;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AnalysisScreen extends StatefulWidget {
+class AnalysisScreen extends ConsumerStatefulWidget {
   const AnalysisScreen({super.key});
-    //TODO
-  /* This screen only shows the map,
-   other requirements still need to be done */
 
   @override
-  State<AnalysisScreen> createState() => _AnalysisScreenState();
+  ConsumerState<AnalysisScreen> createState() => _AnalysisScreenState();
 }
 
-class _AnalysisScreenState extends State<AnalysisScreen> {
+class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   late GoogleMapController mapController;
+  loc.Location location = loc.Location();
+  late Future cameraPosBuilder;
+  late CameraPosition initialCameraPosition;
+  bool isLoading = true;
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  @override
+  void initState() {
+    setLocation() async {
+      cameraPosBuilder = getUserStartCamera(location);
+      initialCameraPosition = await cameraPosBuilder;
+      isLoading = false;
+    }
+    setLocation();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Analysis'),
-      ),
-      body: GoogleMap(
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          mapController = controller;
-        },
-      ),
-    );
+    final user = ref.watch(userProvider);
+    if (!(user.accountType == null || user.accountType == "standard")) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Analysis Map'),
+        ),
+        body: FutureBuilder(
+          future: cameraPosBuilder,
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                return const Text("check error!");
+              } else if (snapshot.hasData) {
+                return Stack(
+                  children: [
+                    GoogleMap(
+                        myLocationEnabled: true,
+                        initialCameraPosition: initialCameraPosition,
+                    ),
+                  ],
+                );
+              }
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        )
+      );
+    }
+    else if(user.accountType == "standard") {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Analysis Map"),
+        ),
+        body: const Center(
+            child: Text(
+              "You must be either a municipality or institute to view",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+        ),
+      );
+    }
+    else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Analysis Map"),
+        ),
+        body: const Center(
+            child: Text(
+              "Login to view the analysis map",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+        ),
+      );
+    }
   }
+}
+
+Future<CameraPosition> getUserStartCamera(loc.Location location) async {
+  //If application is not demonstrating, get actual current location
+  if (!isDemoing) {
+    //Do a one time check to determine user's starting location
+    loc.LocationData userLocation = await location.getLocation();
+    LatLng conversion = LatLng(userLocation.latitude!, userLocation.longitude!);
+    return CameraPosition(target: conversion, zoom: 17.0, tilt: 0, bearing: 0);
+  }
+
+  //If the application is demonstrating, do this instead
+  return CameraPosition(target: newCurrLoc, zoom: 17.0, tilt: 0, bearing: 0);
 }
