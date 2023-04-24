@@ -15,36 +15,11 @@ class NavBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final user = ref.watch(userProvider);
-    final userName = ref.watch(userProvider).name;
 
     //Variable List
     double drawerWidth = MediaQuery.of(context).size.width * 0.9;
     EdgeInsetsGeometry navigationListPadding =  const EdgeInsets.symmetric(horizontal: 20,vertical: 5);
     TextStyle navStyle = const TextStyle(fontSize: 20, color: Colors.white);
-
-    //Tiles For Navigation
-    Widget createListTile(String navPath, String navName, IconData iconType) {
-      //https://api.flutter.dev/flutter/material/ListTile-class.html
-      return ListTile(
-        //Altered from Keshaun's Dev Screen
-        onTap: () => context.push(navPath),
-
-        leading: Icon(
-          iconType,
-          color: Colors.white,
-          size: 30,
-        ),
-        title: Text(navName,
-          style: navStyle,
-        ),
-        contentPadding: navigationListPadding,
-      );
-    }
-
-    //Separtor For Navigation
-    Widget separator() {
-      return const Divider(color: Colors.white, thickness: 4, height: 30, indent: 10, endIndent: 50);
-    }
 
     return SizedBox(
       width: drawerWidth,
@@ -85,7 +60,7 @@ class NavBar extends ConsumerWidget {
                     children:  [
                       Flexible (
                         child: Text(
-                          userName ?? "Signed Out",
+                          user.name ?? "Signed Out",
                             style: const TextStyle(
                               fontSize: 25,
                             ),
@@ -101,22 +76,124 @@ class NavBar extends ConsumerWidget {
 
                 ),
               ),
-              //Navigation Points - Simple Style
+              ListTile(
+                onTap: () => context.push('/notification'),
 
-              createListTile('/notification','Notifications', Icons.notifications),
-              createListTile('/view_history','History', Icons.history),
-              createListTile('/view_organization','Organization', Icons.business),
-              createListTile('/analysis','Analysis', Icons.analytics),
+                leading: const Icon(
+                  Icons.notifications,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("Notifications",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
+              ListTile(
+                onTap: () => context.push('/view_history'),
 
-              separator(),
+                leading: const Icon(
+                  Icons.history,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("History",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
+              ListTile(
+                onTap: () => context.push('/view_organization'),
 
-              createListTile('/login','Account', Icons.person), //TODO different screen depending on login status
-              createListTile('/setting','Settings', Icons.settings),
+                leading: const Icon(
+                  Icons.business,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("Organization",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
+              ListTile(
+                onTap: () => context.push('/analysis'),
 
-              separator(),
+                leading: const Icon(
+                  Icons.analytics,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("Analysis",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
 
-              createListTile('/help','Help', Icons.question_mark_rounded),
-              createListTile('/about','About', Icons.info_outline_rounded),
+              const Divider(color: Colors.white, thickness: 4, height: 30, indent: 10, endIndent: 50),
+
+              //Needs to change onTap to be based on log on status
+              ListTile(
+                onTap: () {
+                  if(user.name != null) {
+                    context.push('/accountInfo');
+                  }
+                  else {
+                    context.push('/login');
+                  }
+                },
+                leading: const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text('Account',
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
+              ListTile(
+                onTap: () => context.push('/setting'),
+
+                leading: const Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("Settings",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
+
+              const Divider(color: Colors.white, thickness: 4, height: 30, indent: 10, endIndent: 50),
+
+              ListTile(
+                onTap: () => context.push('/help'),
+
+                leading: const Icon(
+                  Icons.question_mark_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("Help",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
+
+              ListTile(
+                onTap: () => context.push('/about'),
+
+                leading: const Icon(
+                  Icons.info_outline_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("About",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
 
               //Different from others due to just launching a form instead
               ListTile(
@@ -132,9 +209,19 @@ class NavBar extends ConsumerWidget {
                 ),
                 contentPadding: navigationListPadding,
               ),
+              ListTile(
+                onTap: () => context.push('/demo_button'),
 
-              createListTile('/demo_button','Demo Buttons', Icons.developer_mode),
-
+                leading: const Icon(
+                  Icons.developer_mode,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text("Demo Buttons",
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
             ],
           )
         )
