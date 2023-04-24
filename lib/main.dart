@@ -1,13 +1,13 @@
+import 'package:clear_avenues/Routes.dart';
+import 'package:clear_avenues/utility/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:clear_avenues/Routes.dart';
-import 'package:clear_avenues/utility/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initialize();
-  runApp(ProviderScope(child: MyApp()));
+  runApp(ProviderScope(observers: [NotificationService()], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

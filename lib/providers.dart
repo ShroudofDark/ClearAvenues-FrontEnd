@@ -112,13 +112,16 @@ class PersonLocationProvider extends ChangeNotifier {
   }
 
   _checkPermission() async {
-    _permissionGranted = await _location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
+    do {
+      _permissionGranted = await _location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await _location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return;
+        }
       }
-    }
+    } while (
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed);
   }
 
   _init() {
