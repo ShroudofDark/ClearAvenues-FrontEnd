@@ -7,9 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AnalysisScreen extends ConsumerStatefulWidget {
   const AnalysisScreen({super.key});
-    //TODO
-  /* This screen only shows the map,
-   other requirements still need to be done */
 
   @override
   ConsumerState<AnalysisScreen> createState() => _AnalysisScreenState();

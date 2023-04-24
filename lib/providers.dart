@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:clear_avenues/features/analysis/AnalysisService.dart';
+import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +23,10 @@ class UserNotifier extends Notifier<User> {
   @override
   User build() {
     return User();
+  }
+
+  void logout() {
+    state = User();
   }
 
   void setEmail(String email) {
@@ -164,3 +170,40 @@ class SavedNotifications extends Notifier<List<MyNotification>> {
 
   int length() => state.length;
 }
+
+final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {
+  while (true) {
+    await Future.delayed(const Duration(seconds: 1));
+    List<Association>? associations = await AnalysisService.getAllAssociations(ref);
+    if (associations != null) {
+      yield associations;
+    }
+  }
+});
+
+/*
+final associationMarkersProvider =
+FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
+  final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(), "assets/images/TrafficCone64.png");
+  final associationList = ref.watch(allAssociationsProvider);
+  var associations = associationList.value;
+  var markers = associations?.map((markerInfo) => Marker(
+      markerId: MarkerId(markerInfo.reportId.toString()),
+      draggable: false,
+      position: LatLng(
+        markerInfo.reportLocationLatitude,
+        markerInfo.reportLocationLongitude,
+      ),
+      icon: markerIcon,
+      infoWindow: InfoWindow(
+          title: markerInfo.reportComment,
+          onTap: () {
+            context.pushNamed("report_info", queryParams: {
+
+            });
+          })));
+  if (markers != null) return markers;
+  return <Marker>{};
+});
+*/

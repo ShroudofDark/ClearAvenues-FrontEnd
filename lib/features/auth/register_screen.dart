@@ -197,6 +197,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             const SnackBar(content: Text("Registration Complete")));
       }
       if (context.mounted) {
+        emailController.clear();
+        nameController.clear();
+        passwordController.clear();
         context.pop();
       }
     }

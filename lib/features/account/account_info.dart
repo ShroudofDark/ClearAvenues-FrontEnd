@@ -3,11 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class AccountInfoScreen extends ConsumerWidget {
-  const AccountInfoScreen({Key? key}) : super(key: key);
+class AccountInfoScreen extends ConsumerStatefulWidget {
+  const AccountInfoScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AccountInfoScreen> createState() => _AccountInfoScreen();
+}
+
+class _AccountInfoScreen extends ConsumerState<AccountInfoScreen> {
+
+  TextEditingController emailControl = TextEditingController();
+  TextEditingController passwordControl = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
@@ -53,8 +62,9 @@ class AccountInfoScreen extends ConsumerWidget {
                 fontSize: 16.0,
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: emailControl,
+              decoration: const InputDecoration(
                 hintText: 'New Email Address',
               ),
             ),
@@ -66,16 +76,17 @@ class AccountInfoScreen extends ConsumerWidget {
                 fontSize: 16.0,
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: passwordControl,
+              decoration: const InputDecoration(
                 hintText: 'New Password',
               ),
             ),
             const SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: () {
-                // Takes the user to the login screen
-                context.push('/login');
+                ref.read(userProvider.notifier).logout();
+                context.pop();
               },
               child: const Text('Logout'),
             ),
