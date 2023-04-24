@@ -110,7 +110,26 @@ class NavBar extends ConsumerWidget {
 
               separator(),
 
-              createListTile('/login','Account', Icons.person), //TODO different screen depending on login status
+              //Needs to change onTap to be based on log on status
+              ListTile(
+                onTap: () {
+                  if(userName != null) {
+                    context.push('/accountInfo');
+                  }
+                  else {
+                    context.push('/login');
+                  }
+                },
+                leading: const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                title: Text('Account',
+                  style: navStyle,
+                ),
+                contentPadding: navigationListPadding,
+              ),
               createListTile('/setting','Settings', Icons.settings),
 
               separator(),
