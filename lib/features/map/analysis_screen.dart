@@ -1,9 +1,11 @@
 import 'package:clear_avenues/features/dev/demo_assist.dart';
 import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 class AnalysisScreen extends ConsumerStatefulWidget {
   const AnalysisScreen({super.key});
@@ -17,7 +19,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   loc.Location location = loc.Location();
   late Future cameraPosBuilder;
   late CameraPosition initialCameraPosition;
-  bool isLoading = true;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -33,7 +35,9 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    if (!(user.accountType == null || user.accountType == "standard")) {
+    final heatmaps = ref.watch(heatmapsProvider(context));
+    //TODO add ! back in front
+    if ((user.accountType == null || user.accountType == "standard")) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Analysis Map'),
@@ -48,6 +52,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                 return Stack(
                   children: [
                     GoogleMap(
+                        heatmaps: Set.from(heatmaps.value!),
                         myLocationEnabled: true,
                         initialCameraPosition: initialCameraPosition,
                     ),
@@ -59,7 +64,15 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
               child: CircularProgressIndicator(),
             );
           },
-        )
+        ),
+        floatingActionButton: isLoading
+            ? null
+            : FloatingActionButton.extended(
+              label: Text("Debug Button"),
+              onPressed: () async {
+               },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       );
     }
     else if(user.accountType == "standard") {

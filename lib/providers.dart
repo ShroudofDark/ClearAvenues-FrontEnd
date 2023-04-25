@@ -5,6 +5,7 @@ import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -234,6 +235,62 @@ class SavedNotifications extends Notifier<List<MyNotification>> {
   int length() => state.length;
 }
 
+///----------------------------------
+///       Analysis Providers
+///----------------------------------
+
+final heatmapsProvider =
+FutureProvider.family<Iterable<Heatmap>, BuildContext>((ref, context) async {
+
+  final associationList = ref.watch(allAssociationsProvider);
+  var associations = associationList.value;
+
+  //Current Conundrum :
+  //I want to get a point of each report at a location/association
+  //Right now I'm only asking for one point per location which is based on that location
+  double count = 0;
+  var points = associations?.map((heatmapPoints) {
+    count+=0.0001;
+    return WeightedLatLng(
+        LatLng(36.88490+count, -76.306770+count),
+        weight: 1.0
+    );
+  }).toList();
+
+  //This right here in theory is what I want, but doesn't work as expected
+  //It might likely has to do with the fetchReportsByLocation thing. I wanted
+  //to do a provider akin to allAssociationsProvider, but wasn't sure how to pass
+  //an integer in
+
+  /*
+  List<WeightedLatLng> point = [];
+  associations?.forEach((heatmapPoints) {
+      List<Report> currReports = fetchReportsByLocation(heatmapPoints.associationId.toInt(), ref);
+      currReports?.forEach((report) {
+        LatLng newCoordinate = LatLng(report.reportLocationLatitude,report.reportLocationLongitude);
+        point.add(WeightedLatLng(newCoordinate, weight: heatmapPoints.intensity.toDouble()));
+      });
+  });
+  */
+
+  List<WeightedLatLng> pointsList = [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 1.0),];
+  if(points != null) {
+    pointsList = points;
+  }
+
+  Set<Heatmap> heatmaps = {};
+
+  heatmaps.add(
+      Heatmap(
+        heatmapId: const HeatmapId("One"),
+        data: pointsList,
+        radius: 50,
+      )
+  );
+
+  return heatmaps;
+});
+
 final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
@@ -244,6 +301,13 @@ final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {
     }
   }
 });
+
+fetchReportsByLocation(int locId, Ref ref) async* {
+  List<Report>? reports = await ReportService.getReportsByLocation(locId, ref);
+  if (reports != null) {
+    yield reports;
+  }
+}
 
 /*
 final associationMarkersProvider =
