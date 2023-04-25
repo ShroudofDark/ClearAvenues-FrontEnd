@@ -96,7 +96,7 @@ final markersProvider =
             });
           })));
   */
-  var markers = reports?.map((markerInfo)  {
+  var markers = reports?.map((markerInfo) {
     String readableReportType = convertType(markerInfo.reportType);
 
     /* Right now there is an issue where it flash between the initial set icon
@@ -107,25 +107,18 @@ final markersProvider =
     setMarkerIcon();
     */
     return Marker(
-      markerId: MarkerId(markerInfo.reportId.toString()),
-      draggable: false,
-      position: LatLng(
-        markerInfo.reportLocationLatitude,
-        markerInfo.reportLocationLongitude,
-      ),
-      icon: markerIcon,
-      infoWindow: InfoWindow(
-          title: readableReportType,
-          onTap: () {
-            context.pushNamed("report_info", queryParams: {
-              'p1': readableReportType,
-              'p2': markerInfo.reportStatus,
-              'p3': markerInfo.reportDate,
-              'p4': markerInfo.reportComment,
-              'p5': markerInfo.reportLocationLatitude.toString(),
-              'p6': markerInfo.reportLocationLongitude.toString(),
-            });
-          }));
+        markerId: MarkerId(markerInfo.reportId.toString()),
+        draggable: false,
+        position: LatLng(
+          markerInfo.reportLocationLatitude,
+          markerInfo.reportLocationLongitude,
+        ),
+        icon: markerIcon,
+        infoWindow: InfoWindow(
+            title: readableReportType,
+            onTap: () {
+              context.push('/report_info', extra: markerInfo);
+            }));
   });
 
   if (markers != null) return markers;
@@ -138,6 +131,7 @@ Future<BitmapDescriptor> getMapMarker(String? reportType) async {
       const ImageConfiguration(), "assets/images/Pothole.png");
   return markerImage;
 }
+
 //Converts the report types into readable versions
 String convertType(String? reportType) {
   switch (reportType) {
@@ -216,10 +210,10 @@ final savedNotificationsProvider =
 });
 
 class SavedNotifications extends Notifier<List<MyNotification>> {
-  // Sets up a default notification when app loads
-
   @override
   build() {
+    // Sets up a default notification when app loads
+
     return [MyNotification()];
   }
 

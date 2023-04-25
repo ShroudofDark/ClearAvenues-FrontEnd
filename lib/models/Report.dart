@@ -1,3 +1,5 @@
+enum ReportStatus { submitted, closed }
+
 class Report {
   late num reportId;
   late String reportComment;
