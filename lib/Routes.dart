@@ -1,21 +1,23 @@
 import 'package:clear_avenues/features/account/about_screen.dart';
-import 'package:clear_avenues/features/map/analysis_screen.dart';
+import 'package:clear_avenues/features/account/account_info.dart';
 import 'package:clear_avenues/features/account/bug_screen.dart';
+import 'package:clear_avenues/features/account/help_screen.dart';
+import 'package:clear_avenues/features/account/notification_screen.dart';
+import 'package:clear_avenues/features/account/setting_screen.dart';
+import 'package:clear_avenues/features/account/view_organization.dart';
+import 'package:clear_avenues/features/auth/login_screen.dart';
+import 'package:clear_avenues/features/auth/register_screen.dart';
 import 'package:clear_avenues/features/dev/demo_buttons.dart';
 import 'package:clear_avenues/features/dev/dev_screen.dart';
+import 'package:clear_avenues/features/map/analysis_screen.dart';
 import 'package:clear_avenues/features/map/google_maps_screen.dart';
-import 'package:clear_avenues/features/account/help_screen.dart';
-import 'package:clear_avenues/features/auth/login_screen.dart';
-import 'package:clear_avenues/features/account/notification_screen.dart';
-import 'package:clear_avenues/features/auth/register_screen.dart';
-import 'package:clear_avenues/features/reporting/report_screen.dart';
-import 'package:clear_avenues/features/account/setting_screen.dart';
-import 'package:clear_avenues/features/account/account_info.dart';
-import 'package:clear_avenues/features/reporting/view_history.dart';
-import 'package:clear_avenues/features/account/view_organization.dart';
 import 'package:clear_avenues/features/reporting/report_info.dart';
+import 'package:clear_avenues/features/reporting/report_screen.dart';
+import 'package:clear_avenues/features/reporting/view_history.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'models/Report.dart';
 
 var routes = [
   GoRoute(path: '/', builder: (context, state) => const DevScreen()),
@@ -32,7 +34,9 @@ var routes = [
       }), // report coordinates default to 0.0,0.0 when not entering through map screen tap
   GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
   GoRoute(path: '/setting', builder: (context, state) => const SettingScreen()),
-  GoRoute(path: '/accountInfo', builder: (context, state) => const AccountInfoScreen()),
+  GoRoute(
+      path: '/accountInfo',
+      builder: (context, state) => const AccountInfoScreen()),
   GoRoute(
       path: '/view_organization',
       builder: (context, state) => const ViewOrganization(loggedIn: true)),
@@ -53,12 +57,7 @@ var routes = [
     name: "report_info",
     path: "/report_info",
     builder: (context, state) => ReportInfoScreen(
-      reportType: state.queryParams['p1'],
-      reportStatus: state.queryParams['p2'],
-      reportTime: state.queryParams['p3'],
-      reportDecription: state.queryParams['p4'],
-      reportLat: state.queryParams['p5'],
-      reportLon: state.queryParams['p6'],
+      report: state.extra as Report,
     ),
   )
 ];
