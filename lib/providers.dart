@@ -70,7 +70,7 @@ final httpClientProvider = Provider((ref) => Client());
 final markersProvider =
     FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
   final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(), "assets/images/TrafficCone64.png");
+      const ImageConfiguration(), "assets/images/icon.png");
   final reportList = ref.watch(allReportsProvider);
   var reports = reportList.value;
   /*
@@ -134,7 +134,7 @@ final markersProvider =
 //Temporary at the moment until I talk to Keshaun more about this
 Future<BitmapDescriptor> getMapMarker(String? reportType) async {
   BitmapDescriptor markerImage = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(), "assets/images/Pothole64.png");
+      const ImageConfiguration(), "assets/images/Pothole.png");
   return markerImage;
 }
 //Converts the report types into readable versions

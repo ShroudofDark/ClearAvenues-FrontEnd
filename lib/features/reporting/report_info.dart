@@ -21,7 +21,7 @@ class ReportInfoScreen extends StatefulWidget {
 }
 
 class _ReportInfoScreenState extends State<ReportInfoScreen> {
-  String? _address;
+  String _address = "";
 
   List<String> reportStatusOptions = ["Active", "Inactive"];
 
@@ -138,7 +138,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                       return Text(snapshot.data!);
                     } else {
                       return Text(
-                        _address!,
+                        _address,
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,

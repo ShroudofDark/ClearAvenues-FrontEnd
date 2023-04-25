@@ -42,19 +42,19 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   //Allows for Images and Other Customization
   List<UnsafeCondition> conditions = [
     UnsafeCondition(
-        "Debris", "debris", Image.asset("assets/images/Debris64.png")),
+        "Debris", "debris", Image.asset("assets/images/icon.png")),
     UnsafeCondition(
-        "Flooding", "flooding", Image.asset("assets/images/TrafficCone64.png")),
+        "Flooding", "flooding", Image.asset("assets/images/icon.png")),
     UnsafeCondition("Missing Sign", "missing_signage",
-        Image.asset("assets/images/MissingSign64.png")),
+        Image.asset("assets/images/missing_sign.png")),
     UnsafeCondition(
-        "Pothole", "pothole", Image.asset("assets/images/Pothole64.png")),
+        "Pothole", "pothole", Image.asset("assets/images/Pothole.png")),
     UnsafeCondition("Obstructed Sign", "obstructed_sign",
-        Image.asset("assets/images/ObstructedSign64.png")),
+        Image.asset("assets/images/icon.png")),
     UnsafeCondition("Vehicular Related", "vehicle_accident",
-        Image.asset("assets/images/TrafficCone64.png")),
+        Image.asset("assets/images/icon.png")),
     UnsafeCondition(
-        "Other", "other", Image.asset("assets/images/TrafficCone64.png")),
+        "Other", "other", Image.asset("assets/images/icon.png")),
   ];
 
   List<XFile> imageFileList = []; //For multi-images + gallery
