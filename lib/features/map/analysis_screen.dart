@@ -36,6 +36,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final heatmapPoints = ref.watch(heatmapPointsProvider);
+    final associationMarkers = ref.watch(associationMarkerProvider(context));
     //TODO add ! back in front
     if ((user.accountType == null || user.accountType == "standard")) {
       return Scaffold(
@@ -52,12 +53,16 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                 return Stack(
                   children: [
                     GoogleMap(
-                      heatmaps: {Heatmap(
+                      heatmaps: {
+                        Heatmap(
                           heatmapId: const HeatmapId("One"),
-                          data: heatmapPoints.value!,
+                          data: heatmapPoints.value
+                              ?? [const WeightedLatLng(LatLng(0,0), weight: 0)],
                           radius: 50,
                         )
                       },
+                        //markers: Set.from(associationMarkers.value!),
+                        markers: associationMarkers.hasValue ? Set.from(associationMarkers.value!): {},
                         myLocationEnabled: true,
                         initialCameraPosition: initialCameraPosition,
                     ),
@@ -75,6 +80,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
             : FloatingActionButton.extended(
               label: Text("Debug Button"),
               onPressed: () async {
+                debugPrint(associationMarkers.value.toString());
                },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

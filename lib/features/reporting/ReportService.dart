@@ -55,7 +55,29 @@ class ReportService {
     }
   }
 
-  static Future<List<Report>?> getReportsByLocation(int id, Ref ref) async {
+  static Future<List<Report>?> getReportsByLocation(int id) async {
+    try {
+      var url = Uri(
+          scheme: 'http',
+          host: Constants.serverIP,
+          port: Constants.serverPort,
+          path: '/reports/bylocation/$id');
+      var response = await get(url);
+      if (response.statusCode == 200) {
+        Iterable jsonList = json.decode(response.body);
+        var reports = List<Report>.from(
+            jsonList.map((report) => Report.fromJson(report)));
+        return reports;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      debugPrint("Error getting reports by location: $error");
+      return null;
+    }
+  }
+
+  static Future<List<Report>?> getReportsByLocationRef(int id, Ref ref) async {
     try {
       var url = Uri(
           scheme: 'http',
