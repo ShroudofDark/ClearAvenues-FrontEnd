@@ -41,20 +41,58 @@ class UnsafeCondition {
 class _ReportScreenState extends ConsumerState<ReportScreen> {
   //Allows for Images and Other Customization
   List<UnsafeCondition> conditions = [
-    UnsafeCondition(
-        "Debris", "debris", Image.asset("assets/images/icon.png")),
-    UnsafeCondition(
-        "Flooding", "flooding", Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Animal Carcass", "dead_animal",
+        Image.asset("assets/images/roadkill.png")),
+    UnsafeCondition("Animal Crossing Road", "animal_crossing",
+        Image.asset("assets/images/animal_crossing.png")),
+    UnsafeCondition("Blind Turn", "blind_turn",
+        Image.asset("assets/images/blind.png")),
+    UnsafeCondition("Damaged Sign", "damaged_sign",
+        Image.asset("assets/images/damage_sign.png")),
+    UnsafeCondition("Debris", "debris",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Fallen Tree", "fallen_tree",
+        Image.asset("assets/images/Fallen_tree.png")),
+    UnsafeCondition("Flooding", "flooding",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Fog", "fog",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Hail", "hail",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Ice", "ice",
+        Image.asset("assets/images/icy.png")),
+    UnsafeCondition("Leaves", "leaves",
+        Image.asset("assets/images/icon.png")),
     UnsafeCondition("Missing Sign", "missing_signage",
         Image.asset("assets/images/missing_sign.png")),
-    UnsafeCondition(
-        "Pothole", "pothole", Image.asset("assets/images/Pothole.png")),
+    UnsafeCondition("Pothole", "pothole",
+        Image.asset("assets/images/Pothole.png")),
+    UnsafeCondition("Obfuscation - Rain", "blinding_rain",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Obfuscation - Sun", "blinding_sun",
+        Image.asset("assets/images/sunny.png")),
     UnsafeCondition("Obstructed Sign", "obstructed_sign",
         Image.asset("assets/images/icon.png")),
-    UnsafeCondition("Vehicular Related", "vehicle_accident",
+    UnsafeCondition("Obstructed Sign - Building", "sign_blocked_building",
         Image.asset("assets/images/icon.png")),
-    UnsafeCondition(
-        "Other", "other", Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Obstructed Sign - Foliage", "sign_blocked_foliage",
+        Image.asset("assets/images/sign_blocked_by_foliage.png")),
+    UnsafeCondition("Obstructed Sign - Different Sign", "sign_blocked_sign",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Obstructed Sign - Vehicle", "sign_blocked_vehicle",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Overgrowth", "overgrowth",
+        Image.asset("assets/images/overgrowth.png")),
+    UnsafeCondition("Snorlax in Road", "snorlax",
+        Image.asset("assets/images/sleeping_snorlax.png")),
+    UnsafeCondition("Spilled Material", "spill_material",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Unplowed Road", "unplowed_road",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Vehicle Accident", "vehicle_accident",
+        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Other", "other",
+        Image.asset("assets/images/icon.png")),
   ];
 
   List<XFile> imageFileList = []; //For multi-images + gallery
@@ -211,8 +249,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                         const SizedBox(
                           width: 30,
                         ),
-                        Text(
-                          condition.displayName,
+                        Flexible(
+                          child: Text(
+                            condition.displayName,
+                          ),
                         ),
                       ],
                     ),
