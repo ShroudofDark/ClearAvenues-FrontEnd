@@ -35,7 +35,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    final heatmaps = ref.watch(heatmapsProvider(context));
+    final heatmapPoints = ref.watch(heatmapPointsProvider);
     //TODO add ! back in front
     if ((user.accountType == null || user.accountType == "standard")) {
       return Scaffold(
@@ -52,7 +52,12 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                 return Stack(
                   children: [
                     GoogleMap(
-                        heatmaps: Set.from(heatmaps.value!),
+                      heatmaps: {Heatmap(
+                          heatmapId: const HeatmapId("One"),
+                          data: heatmapPoints.value!,
+                          radius: 50,
+                        )
+                      },
                         myLocationEnabled: true,
                         initialCameraPosition: initialCameraPosition,
                     ),

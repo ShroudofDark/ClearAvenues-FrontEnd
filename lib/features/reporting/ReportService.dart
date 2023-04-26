@@ -61,7 +61,7 @@ class ReportService {
           scheme: 'http',
           host: Constants.serverIP,
           port: Constants.serverPort,
-          path: '/reports/byLocation/$id');
+          path: '/reports/bylocation/$id');
       var response = await ref.read(httpClientProvider).get(url);
       if (response.statusCode == 200) {
         Iterable jsonList = json.decode(response.body);

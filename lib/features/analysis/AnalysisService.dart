@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'package:clear_avenues/constants.dart';
 import 'package:clear_avenues/models/Association.dart';
-import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
 
 class AnalysisService {
-  static Future<List<Association>?> getAllAssociations(Ref ref) async {
+
+  Future<List<Association>?> getAllAssociations() async {
     try {
       var url = Uri(
           scheme: 'http',
           host: Constants.serverIP,
           port: Constants.serverPort,
           path: '/locations');
-      var response = await ref.read(httpClientProvider).get(url);
+      var response = await get(url);
       if (response.statusCode == 200) {
         Iterable jsonList = json.decode(response.body);
         var associations = List<Association>.from(

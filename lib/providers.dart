@@ -74,28 +74,6 @@ final markersProvider =
       const ImageConfiguration(), "assets/images/icon.png");
   final reportList = ref.watch(allReportsProvider);
   var reports = reportList.value;
-  /*
-  var markers = reports?.map((markerInfo) => Marker(
-      markerId: MarkerId(markerInfo.reportId.toString()),
-      draggable: false,
-      position: LatLng(
-        markerInfo.reportLocationLatitude,
-        markerInfo.reportLocationLongitude,
-      ),
-      icon: markerIcon,
-      infoWindow: InfoWindow(
-          title: convertType(markerInfo.reportType),
-          onTap: () {
-            context.pushNamed("report_info", queryParams: {
-              'p1': convertType(markerInfo.reportType),
-              'p2': markerInfo.reportStatus,
-              'p3': markerInfo.reportDate,
-              'p4': markerInfo.reportComment,
-              'p5': markerInfo.reportLocationLatitude.toString(),
-              'p6': markerInfo.reportLocationLongitude.toString(),
-            });
-          })));
-  */
   var markers = reports?.map((markerInfo) {
     String readableReportType = convertType(markerInfo.reportType);
 
@@ -233,74 +211,50 @@ class SavedNotifications extends Notifier<List<MyNotification>> {
 ///       Analysis Providers
 ///----------------------------------
 
-final heatmapsProvider =
-FutureProvider.family<Iterable<Heatmap>, BuildContext>((ref, context) async {
+final heatmapPointsProvider = FutureProvider<List<WeightedLatLng>>((ref) async {
 
   final associationList = ref.watch(allAssociationsProvider);
-  var associations = associationList.value;
 
-  //Current Conundrum :
-  //I want to get a point of each report at a location/association
-  //Right now I'm only asking for one point per location which is based on that location
-  double count = 0;
-  var points = associations?.map((heatmapPoints) {
-    count+=0.0001;
-    return WeightedLatLng(
-        LatLng(36.88490+count, -76.306770+count),
-        weight: 1.0
-    );
-  }).toList();
-
-  //This right here in theory is what I want, but doesn't work as expected
-  //It might likely has to do with the fetchReportsByLocation thing. I wanted
-  //to do a provider akin to allAssociationsProvider, but wasn't sure how to pass
-  //an integer in
-
-  /*
-  List<WeightedLatLng> point = [];
-  associations?.forEach((heatmapPoints) {
-      List<Report> currReports = fetchReportsByLocation(heatmapPoints.associationId.toInt(), ref);
-      currReports?.forEach((report) {
-        LatLng newCoordinate = LatLng(report.reportLocationLatitude,report.reportLocationLongitude);
-        point.add(WeightedLatLng(newCoordinate, weight: heatmapPoints.intensity.toDouble()));
-      });
-  });
-  */
-
-  List<WeightedLatLng> pointsList = [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 1.0),];
-  if(points != null) {
-    pointsList = points;
+  List<WeightedLatLng> pointsList = [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 0.0),];
+  while (true) {
+    await Future.delayed(const Duration(seconds: 1));
+    if (associationList.hasValue) {
+      for (final location in associationList.value!){
+        var reports = await fetchReportsByLocation(location.associationId.toInt(), ref);
+        for (final report in reports){
+          pointsList.add(WeightedLatLng(
+              LatLng(report.reportLocationLatitude, report.reportLocationLongitude),
+              weight: (location.intensity.toDouble()/3)));
+        }
+      }
+      return pointsList;
+    }
+    else {
+      return [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 1.0),];
+    }
   }
 
-  Set<Heatmap> heatmaps = {};
-
-  heatmaps.add(
-      Heatmap(
-        heatmapId: const HeatmapId("One"),
-        data: pointsList,
-        radius: 50,
-      )
-  );
-
-  return heatmaps;
 });
 
 final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
     List<Association>? associations =
-        await AnalysisService.getAllAssociations(ref);
+        await ref.watch(analysisServiceProvider).getAllAssociations();
     if (associations != null) {
       yield associations;
     }
   }
 });
 
-fetchReportsByLocation(int locId, Ref ref) async* {
+final analysisServiceProvider = Provider((Ref ref) => AnalysisService());
+
+Future<List<Report>> fetchReportsByLocation(int locId, Ref ref) async {
   List<Report>? reports = await ReportService.getReportsByLocation(locId, ref);
   if (reports != null) {
-    yield reports;
+    return reports;
   }
+  return [];
 }
 
 /*
