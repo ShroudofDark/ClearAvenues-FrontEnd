@@ -5,7 +5,6 @@ import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -66,10 +65,13 @@ class UserNotifier extends Notifier<User> {
   }
 }
 
-final httpClientProvider = Provider((ref) => Client());
+final httpClientProvider = Provider<Client>((ref) {
+  return Client();
+});
 
-final markersProvider =
-    FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
+final markersProvider = FutureProvider.family
+    .autoDispose<Iterable<Marker>, BuildContext>((ref, context) async {
+  ref.keepAlive();
   final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(), "assets/images/icon.png");
   final reportList = ref.watch(allReportsProvider);
@@ -130,7 +132,9 @@ String convertType(String? reportType) {
   }
 }
 
-final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
+final allReportsProvider =
+    StreamProvider.autoDispose<List<Report>>((ref) async* {
+  ref.keepAlive();
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
     List<Report>? reports = await ReportService.getAllReports(ref);
@@ -212,28 +216,31 @@ class SavedNotifications extends Notifier<List<MyNotification>> {
 ///----------------------------------
 
 final heatmapPointsProvider = FutureProvider<List<WeightedLatLng>>((ref) async {
-
   final associationList = ref.watch(allAssociationsProvider);
 
-  List<WeightedLatLng> pointsList = [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 0.0),];
+  List<WeightedLatLng> pointsList = [
+    const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 0.0),
+  ];
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
     if (associationList.hasValue) {
-      for (final location in associationList.value!){
-        var reports = await fetchReportsByLocation(location.associationId.toInt(), ref);
-        for (final report in reports){
+      for (final location in associationList.value!) {
+        var reports =
+            await fetchReportsByLocation(location.associationId.toInt(), ref);
+        for (final report in reports) {
           pointsList.add(WeightedLatLng(
-              LatLng(report.reportLocationLatitude, report.reportLocationLongitude),
-              weight: (location.intensity.toDouble()/3)));
+              LatLng(report.reportLocationLatitude,
+                  report.reportLocationLongitude),
+              weight: (location.intensity.toDouble() / 3)));
         }
       }
       return pointsList;
-    }
-    else {
-      return [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 1.0),];
+    } else {
+      return [
+        const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 1.0),
+      ];
     }
   }
-
 });
 
 final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {

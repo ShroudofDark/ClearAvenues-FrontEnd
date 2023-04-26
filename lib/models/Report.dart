@@ -46,4 +46,28 @@ class Report {
     data['status'] = reportStatus;
     return data;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Report &&
+      reportId == other.reportId &&
+      reportComment == other.reportComment &&
+      reportDate == other.reportDate &&
+      resolutionDate == other.resolutionDate &&
+      reportLocationLongitude == other.reportLocationLongitude &&
+      reportLocationLatitude == other.reportLocationLatitude &&
+      reportType == other.reportType &&
+      reportStatus == other.reportStatus &&
+      reportScore == other.reportScore;
+
+  @override
+  int get hashCode => Object.hash(
+      reportId,
+      reportComment,
+      reportDate,
+      reportScore,
+      reportLocationLatitude,
+      reportLocationLongitude,
+      reportType,
+      reportStatus);
 }

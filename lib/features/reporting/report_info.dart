@@ -1,19 +1,21 @@
+import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../models/Report.dart';
 
-class ReportInfoScreen extends StatefulWidget {
+class ReportInfoScreen extends ConsumerStatefulWidget {
   final Report report;
 
   const ReportInfoScreen({super.key, required this.report});
 
   @override
-  State<ReportInfoScreen> createState() => _ReportInfoScreenState();
+  ConsumerState<ReportInfoScreen> createState() => _ReportInfoScreenState();
 }
 
-class _ReportInfoScreenState extends State<ReportInfoScreen> {
+class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
   @override
   void initState() {
     super.initState();
@@ -21,6 +23,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     LatLng coords = LatLng(widget.report.reportLocationLatitude,
         widget.report.reportLocationLongitude);
 
@@ -260,24 +263,27 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                   ),
                 ),
               ]),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint("yes");
-                    // TODO send to request database
-                  },
-                  child: const Text('Yes'),
-                ),
-                const SizedBox(
-                    width: 16), // Add some spacing between the buttons
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint("no");
-                    // TODO send to request database
-                  },
-                  child: const Text('no'),
-                ),
-              ]),
+              user.accountType == "municipality"
+                  ? ElevatedButton(
+                      onPressed: () {}, child: const Text("Close Report"))
+                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          debugPrint("yes");
+                          // TODO send to request database
+                        },
+                        child: const Text('Yes'),
+                      ),
+                      const SizedBox(
+                          width: 16), // Add some spacing between the buttons
+                      ElevatedButton(
+                        onPressed: () {
+                          debugPrint("no");
+                          // TODO send to request database
+                        },
+                        child: const Text('no'),
+                      ),
+                    ]),
             ], //column children
           ),
         ));
