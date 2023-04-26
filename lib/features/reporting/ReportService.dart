@@ -55,7 +55,7 @@ class ReportService {
     }
   }
 
-  static Future<List<Report>?> getReportsByLocation(int id, Ref ref) async {
+  static Future<List<Report>?> getReportsByLocationRef(int id, Ref ref) async {
     try {
       var url = Uri(
           scheme: 'http',

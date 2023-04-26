@@ -5,6 +5,7 @@ import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -65,13 +66,10 @@ class UserNotifier extends Notifier<User> {
   }
 }
 
-final httpClientProvider = Provider<Client>((ref) {
-  return Client();
-});
+final httpClientProvider = Provider((ref) => Client());
 
-final markersProvider = FutureProvider.family
-    .autoDispose<Iterable<Marker>, BuildContext>((ref, context) async {
-  ref.keepAlive();
+final markersProvider =
+    FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
   final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(), "assets/images/icon.png");
   final reportList = ref.watch(allReportsProvider);
@@ -132,9 +130,7 @@ String convertType(String? reportType) {
   }
 }
 
-final allReportsProvider =
-    StreamProvider.autoDispose<List<Report>>((ref) async* {
-  ref.keepAlive();
+final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
     List<Report>? reports = await ReportService.getAllReports(ref);
@@ -216,77 +212,210 @@ class SavedNotifications extends Notifier<List<MyNotification>> {
 ///----------------------------------
 
 final heatmapPointsProvider = FutureProvider<List<WeightedLatLng>>((ref) async {
+
   final associationList = ref.watch(allAssociationsProvider);
 
-  List<WeightedLatLng> pointsList = [
-    const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 0.0),
-  ];
+  List<WeightedLatLng> pointsList = [const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 0.0),];
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
     if (associationList.hasValue) {
-      for (final location in associationList.value!) {
-        var reports =
-            await fetchReportsByLocation(location.associationId.toInt(), ref);
-        for (final report in reports) {
-          pointsList.add(WeightedLatLng(
-              LatLng(report.reportLocationLatitude,
-                  report.reportLocationLongitude),
-              weight: (location.intensity.toDouble() / 3)));
+      for (final location in associationList.value!){
+        var reportsList = ref.watch(reportsByLocationProvider(location.associationId.toInt()));
+        var reports = reportsList.value;
+        if (reportsList.hasValue) {
+          for (final report in reports!){
+            pointsList.add(WeightedLatLng(
+                LatLng(report.reportLocationLatitude, report.reportLocationLongitude),
+                //weight: (location.intensity.toDouble()/3))); //Actual weighting system, use this when not debugging
+                weight: (1.0)));
+          }
         }
       }
       return pointsList;
-    } else {
-      return [
-        const WeightedLatLng(LatLng(36.88420, -76.306730), weight: 1.0),
-      ];
+    }
+    else {
+      return [const WeightedLatLng(LatLng(0, 0), weight: 0.0),];
+    }
+  }
+
+});
+
+final associationMarkerProvider = FutureProvider.family<Set<Marker>, BuildContext>((ref, context) async {
+
+  final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(), "assets/images/icon.png");
+  final associationList = ref.watch(allAssociationsProvider);
+  Set<Marker> markers = {};
+  var count=0.0;
+  while(true) {
+    await Future.delayed(const Duration(seconds: 1));
+    if (associationList.hasValue) {
+      for(final location in associationList.value!) {
+        var associationLocationList = ref.watch(associationLocationProvider(location.associationId.toInt()));
+        var associationLocations = associationLocationList.value;
+        if(associationLocationList.hasValue && associationLocations!.isNotEmpty) {
+          count+=0.0001;
+          debugPrint("${associationLocations[0].latitude},${associationLocations[0].longitude}");
+          markers.add(
+              Marker(
+                markerId: MarkerId("${location.associationId}"),
+                draggable: false,
+                position: LatLng(
+                  //associationLocations[0].latitude,
+                  //associationLocations[0].longitude,
+                  associationLocations[0].latitude+count,
+                  associationLocations[0].longitude+count,
+                ),
+                icon: markerIcon,
+                infoWindow: InfoWindow(
+                    title: "Association Report Zipcode: ${location.associationId}",
+                    onTap: () {
+                      debugPrint("${location.associationId} AHAHAHAHAHHAAGASAFSAFSDSA");
+                    }
+                ),
+              )
+          );
+        }
+      }
+      debugPrint("I'm Sending the Markers");
+      return markers;
+    }
+    else {
+      return {};
     }
   }
 });
 
+final associationMarkerProviderStream = StreamProvider.family<Set<Marker>, BuildContext>((ref, context) async* {
+
+  final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(), "assets/images/icon.png");
+  final associationList = ref.watch(allAssociationsProvider);
+  Set<Marker> markers = {};
+  var count=0.0;
+  while(true) {
+    await Future.delayed(const Duration(seconds: 1));
+    if (associationList.hasValue) {
+      for(final location in associationList.value!) {
+        var associationLocationList = ref.watch(associationLocationProvider(location.associationId.toInt()));
+        var associationLocations = associationLocationList.value;
+        if(associationLocationList.hasValue && associationLocations!.isNotEmpty) {
+          count+=0.0001;
+          debugPrint("${associationLocations[0].latitude},${associationLocations[0].longitude}");
+          markers.add(
+            Marker(
+              markerId: MarkerId("${location.associationId}"),
+              draggable: false,
+              position: LatLng(
+                associationLocations[0].latitude,
+                associationLocations[0].longitude,
+                //associationLocations[0].latitude+count,
+                //associationLocations[0].longitude+count,
+              ),
+              icon: markerIcon,
+                infoWindow: InfoWindow(
+                    title: "Association Report Zipcode: ${location.associationId}",
+                    onTap: () {
+                      debugPrint("${location.associationId} AHAHAHAHAHHAAGASAFSAFSDSA");
+                    }
+                  ),
+            )
+          );
+        }
+      }
+      debugPrint("I'm Sending the Markers");
+      yield markers;
+    }
+    else {
+      yield {};
+    }
+  }
+});
+
+//Without Ref
 final allAssociationsProvider = StreamProvider<List<Association>>((ref) async* {
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
     List<Association>? associations =
-        await ref.watch(analysisServiceProvider).getAllAssociations();
+    await ref.watch(analysisServiceProvider).getAllAssociations();
     if (associations != null) {
       yield associations;
     }
   }
 });
 
+//With Ref 
+
+final allAssociationsProviderRef = StreamProvider<List<Association>>((ref) async* {
+  while (true) {
+    await Future.delayed(const Duration(seconds: 1));
+    List<Association>? associations =
+    await ref.watch(analysisServiceProvider).getAllAssociationsRef(ref);
+    if (associations != null) {
+      yield associations;
+    }
+  }
+}); 
+
 final analysisServiceProvider = Provider((Ref ref) => AnalysisService());
 
-Future<List<Report>> fetchReportsByLocation(int locId, Ref ref) async {
-  List<Report>? reports = await ReportService.getReportsByLocation(locId, ref);
-  if (reports != null) {
-    return reports;
+final reportsByLocationProvider = StreamProvider.family<List<Report>, int>((ref,loc) async* {
+  while (true) {
+    await Future.delayed(const Duration(seconds: 1));
+    List<Report>? reports = await ReportService.getReportsByLocationRef(loc, ref);
+    if (reports != null) {
+      yield reports;
+    }
   }
-  return [];
-}
-
-/*
-final associationMarkersProvider =
-FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
-  final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(), "assets/images/TrafficCone64.png");
-  final associationList = ref.watch(allAssociationsProvider);
-  var associations = associationList.value;
-  var markers = associations?.map((markerInfo) => Marker(
-      markerId: MarkerId(markerInfo.reportId.toString()),
-      draggable: false,
-      position: LatLng(
-        markerInfo.reportLocationLatitude,
-        markerInfo.reportLocationLongitude,
-      ),
-      icon: markerIcon,
-      infoWindow: InfoWindow(
-          title: markerInfo.reportComment,
-          onTap: () {
-            context.pushNamed("report_info", queryParams: {
-
-            });
-          })));
-  if (markers != null) return markers;
-  return <Marker>{};
 });
-*/
+
+final associationLocationProviderStream = StreamProvider.family<List<geo.Location>, int>((ref, zipCode) async* {
+  while(true) {
+    debugPrint("$zipCode");
+    await Future.delayed(const Duration(seconds: 1));
+    //List<geo.Location> locations = await geo.locationFromAddress("$zipCode", localeIdentifier: "en");
+    List<geo.Location> locations = await geo.locationFromAddress("23508", localeIdentifier: "en");
+    yield locations;
+  }
+});
+
+final associationLocationProvider = FutureProvider.family<List<geo.Location>, int>((ref, zipCode) async {
+    debugPrint("$zipCode");
+    //List<geo.Location> locations = await geo.locationFromAddress("$zipCode", localeIdentifier: "en");
+    List<geo.Location> locations = await geo.locationFromAddress("23508", localeIdentifier: "en");
+    return locations;
+
+});
+
+final associationMarkerProvider2 =
+  FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
+    final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(), "assets/images/icon.png");
+    final associationList = ref.watch(allAssociationsProviderRef);
+    var associations = associationList.value;
+
+    var markers = <Future<Marker>>{};
+
+    if (associations != null) {
+      markers = associations.map((markerInfo) async {
+        List<geo.Location> associationLocation =
+        await geo.locationFromAddress("${markerInfo.associationId}", localeIdentifier: "en");
+
+        return Marker(
+            markerId: MarkerId(markerInfo.associationId.toString()),
+            draggable: false,
+            position: LatLng(
+              associationLocation[0].latitude,
+              associationLocation[0].longitude,
+            ),
+            icon: markerIcon,
+            infoWindow: InfoWindow(
+                title: markerInfo.associationId.toString(),
+                onTap: () {
+                  context.push('/report_info', extra: markerInfo);
+                }));
+      }).toSet();
+    }
+    //There are instances of future markers here, but some reason its not getting supplied to the map right
+    return await Future.wait(markers);
+  });
