@@ -61,8 +61,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                           radius: 50,
                         )
                       },
-                        //markers: Set.from(associationMarkers.value!),
-                        markers: associationMarkers.hasValue ? Set.from(associationMarkers.value!): {},
+                        markers: Set.from(associationMarkers.value!),
                         myLocationEnabled: true,
                         initialCameraPosition: initialCameraPosition,
                     ),

@@ -5,7 +5,6 @@ import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -240,96 +239,29 @@ final heatmapPointsProvider = FutureProvider<List<WeightedLatLng>>((ref) async {
 
 });
 
-final associationMarkerProvider = FutureProvider.family<Set<Marker>, BuildContext>((ref, context) async {
-
+final associationMarkerProvider =
+FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
   final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(), "assets/images/icon.png");
-  final associationList = ref.watch(allAssociationsProvider);
-  Set<Marker> markers = {};
-  var count=0.0;
-  while(true) {
-    await Future.delayed(const Duration(seconds: 1));
-    if (associationList.hasValue) {
-      for(final location in associationList.value!) {
-        var associationLocationList = ref.watch(associationLocationProvider(location.associationId.toInt()));
-        var associationLocations = associationLocationList.value;
-        if(associationLocationList.hasValue && associationLocations!.isNotEmpty) {
-          count+=0.0001;
-          debugPrint("${associationLocations[0].latitude},${associationLocations[0].longitude}");
-          markers.add(
-              Marker(
-                markerId: MarkerId("${location.associationId}"),
-                draggable: false,
-                position: LatLng(
-                  //associationLocations[0].latitude,
-                  //associationLocations[0].longitude,
-                  associationLocations[0].latitude+count,
-                  associationLocations[0].longitude+count,
-                ),
-                icon: markerIcon,
-                infoWindow: InfoWindow(
-                    title: "Association Report Zipcode: ${location.associationId}",
-                    onTap: () {
-                      debugPrint("${location.associationId} AHAHAHAHAHHAAGASAFSAFSDSA");
-                    }
-                ),
-              )
-          );
-        }
-      }
-      debugPrint("I'm Sending the Markers");
-      return markers;
-    }
-    else {
-      return {};
-    }
-  }
-});
-
-final associationMarkerProviderStream = StreamProvider.family<Set<Marker>, BuildContext>((ref, context) async* {
-
-  final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(), "assets/images/icon.png");
-  final associationList = ref.watch(allAssociationsProvider);
-  Set<Marker> markers = {};
-  var count=0.0;
-  while(true) {
-    await Future.delayed(const Duration(seconds: 1));
-    if (associationList.hasValue) {
-      for(final location in associationList.value!) {
-        var associationLocationList = ref.watch(associationLocationProvider(location.associationId.toInt()));
-        var associationLocations = associationLocationList.value;
-        if(associationLocationList.hasValue && associationLocations!.isNotEmpty) {
-          count+=0.0001;
-          debugPrint("${associationLocations[0].latitude},${associationLocations[0].longitude}");
-          markers.add(
-            Marker(
-              markerId: MarkerId("${location.associationId}"),
-              draggable: false,
-              position: LatLng(
-                associationLocations[0].latitude,
-                associationLocations[0].longitude,
-                //associationLocations[0].latitude+count,
-                //associationLocations[0].longitude+count,
-              ),
-              icon: markerIcon,
-                infoWindow: InfoWindow(
-                    title: "Association Report Zipcode: ${location.associationId}",
-                    onTap: () {
-                      debugPrint("${location.associationId} AHAHAHAHAHHAAGASAFSAFSDSA");
-                    }
-                  ),
-            )
-          );
-        }
-      }
-      debugPrint("I'm Sending the Markers");
-      yield markers;
-    }
-    else {
-      yield {};
-    }
-  }
+  final associationList = ref.watch(allAssociationsProviderRef);
+  var associations = associationList.value;
+  var markers = associations?.map((markerInfo) {
+    return Marker(
+        markerId: MarkerId(markerInfo.associationId.toString()),
+        draggable: false,
+        position: LatLng(
+          markerInfo.associationLocationLatitude,
+          markerInfo.associationLocationLongitude,
+        ),
+        icon: markerIcon,
+        infoWindow: InfoWindow(
+            title: "Association Report of Area: ${markerInfo.associationId}",
+            onTap: () {
+              debugPrint("Do Later");
+            }));
+  });
+  if (markers != null) return markers;
+  return <Marker>{};
 });
 
 //Without Ref
@@ -369,53 +301,5 @@ final reportsByLocationProvider = StreamProvider.family<List<Report>, int>((ref,
   }
 });
 
-final associationLocationProviderStream = StreamProvider.family<List<geo.Location>, int>((ref, zipCode) async* {
-  while(true) {
-    debugPrint("$zipCode");
-    await Future.delayed(const Duration(seconds: 1));
-    //List<geo.Location> locations = await geo.locationFromAddress("$zipCode", localeIdentifier: "en");
-    List<geo.Location> locations = await geo.locationFromAddress("23508", localeIdentifier: "en");
-    yield locations;
-  }
-});
 
-final associationLocationProvider = FutureProvider.family<List<geo.Location>, int>((ref, zipCode) async {
-    debugPrint("$zipCode");
-    //List<geo.Location> locations = await geo.locationFromAddress("$zipCode", localeIdentifier: "en");
-    List<geo.Location> locations = await geo.locationFromAddress("23508", localeIdentifier: "en");
-    return locations;
 
-});
-
-final associationMarkerProvider2 =
-  FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
-    final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(), "assets/images/icon.png");
-    final associationList = ref.watch(allAssociationsProviderRef);
-    var associations = associationList.value;
-
-    var markers = <Future<Marker>>{};
-
-    if (associations != null) {
-      markers = associations.map((markerInfo) async {
-        List<geo.Location> associationLocation =
-        await geo.locationFromAddress("${markerInfo.associationId}", localeIdentifier: "en");
-
-        return Marker(
-            markerId: MarkerId(markerInfo.associationId.toString()),
-            draggable: false,
-            position: LatLng(
-              associationLocation[0].latitude,
-              associationLocation[0].longitude,
-            ),
-            icon: markerIcon,
-            infoWindow: InfoWindow(
-                title: markerInfo.associationId.toString(),
-                onTap: () {
-                  context.push('/report_info', extra: markerInfo);
-                }));
-      }).toSet();
-    }
-    //There are instances of future markers here, but some reason its not getting supplied to the map right
-    return await Future.wait(markers);
-  });

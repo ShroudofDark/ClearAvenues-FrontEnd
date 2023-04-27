@@ -5,6 +5,8 @@ class Association {
   late num associationId;
   //The weight of an association
   late int intensity;
+  late double associationLocationLatitude;
+  late double associationLocationLongitude;
 
   Association({
     required this.associationId,
@@ -14,6 +16,8 @@ class Association {
   Association.fromJson(Map<String, dynamic> json) {
     associationId = json['locationId'];
     intensity = json['intensityScore'];
+    associationLocationLatitude = json['hotspotLat'];
+    associationLocationLongitude = json['hotspotLong'];
   }
 }
 
