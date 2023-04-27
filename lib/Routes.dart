@@ -14,9 +14,11 @@ import 'package:clear_avenues/features/map/google_maps_screen.dart';
 import 'package:clear_avenues/features/reporting/report_info.dart';
 import 'package:clear_avenues/features/reporting/report_screen.dart';
 import 'package:clear_avenues/features/reporting/view_history.dart';
+import 'package:clear_avenues/models/Association.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'features/analysis/association_info.dart';
 import 'models/Report.dart';
 
 var routes = [
@@ -59,5 +61,12 @@ var routes = [
     builder: (context, state) => ReportInfoScreen(
       report: state.extra as Report,
     ),
-  )
+  ),
+  GoRoute(
+    name: "association_info",
+    path: "/association_info",
+    builder: (context, state) => AssociationInfoScreen(
+      association: state.extra as Association,
+    ),
+  ),
 ];

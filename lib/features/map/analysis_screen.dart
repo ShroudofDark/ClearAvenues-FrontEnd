@@ -1,7 +1,6 @@
 import 'package:clear_avenues/features/dev/demo_assist.dart';
 import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart' as geo;
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,15 +73,6 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
             );
           },
         ),
-        floatingActionButton: isLoading
-            ? null
-            : FloatingActionButton.extended(
-              label: Text("Debug Button"),
-              onPressed: () async {
-                debugPrint(associationMarkers.value.toString());
-               },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       );
     }
     else if(user.accountType == "standard") {
