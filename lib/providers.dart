@@ -257,7 +257,7 @@ FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
         infoWindow: InfoWindow(
             title: "Association Report of Area: ${markerInfo.associationId}",
             onTap: () {
-              debugPrint("Do Later");
+              context.push('/association_info', extra: markerInfo);
             }));
   });
   if (markers != null) return markers;
