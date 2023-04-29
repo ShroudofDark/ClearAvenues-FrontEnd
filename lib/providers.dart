@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:clear_avenues/features/analysis/AccidentService.dart';
 import 'package:clear_avenues/features/analysis/AnalysisService.dart';
+import 'package:clear_avenues/models/Accident.dart';
 import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
 import 'package:flutter/material.dart';
@@ -297,6 +299,16 @@ final reportsByLocationProvider = StreamProvider.family<List<Report>, int>((ref,
     List<Report>? reports = await ReportService.getReportsByLocationRef(loc, ref);
     if (reports != null) {
       yield reports;
+    }
+  }
+});
+
+final accidentsByLocationProvider = StreamProvider.family<List<Accident>, int>((ref,loc) async* {
+  while (true) {
+    await Future.delayed(const Duration(seconds: 1));
+    List<Accident>? accidents = await AccidentService.getReportsByLocationRef(loc, ref);
+    if (accidents != null) {
+      yield accidents;
     }
   }
 });
