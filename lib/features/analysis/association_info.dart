@@ -25,6 +25,9 @@ class _AssociationInfoScreen extends ConsumerState<AssociationInfoScreen> {
         reportsByLocationProvider(widget.association.associationId.toInt()));
     final reports = reportsList.value;
 
+    final accidentsList = ref.watch(
+        accidentsByLocationProvider(widget.association.associationId.toInt()));
+    final accidents = accidentsList.value;
     return Scaffold(
         appBar: AppBar(
           title:
@@ -192,7 +195,77 @@ class _AssociationInfoScreen extends ConsumerState<AssociationInfoScreen> {
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                  //TODO Listbuilder Accidents
+                  ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: accidents?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final currItem = accidents![index];
+                        return Container(
+                          color: Colors.green,
+                          child: ExpansionTile(
+                            iconColor: Colors.white,
+                            textColor: Colors.white,
+                            collapsedIconColor: Colors.white,
+                            collapsedTextColor: Colors.white,
+                            title: Text(
+                              "Accident ${currItem.accidentId} [${currItem.accidentType}]",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            children: [
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Divider(
+                                      thickness: 2,
+                                      color: Colors.green[300],
+                                    ),
+                                    Text(
+                                      "Accident Latitude: ${currItem.accidentLocationLatitude}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Accident Longitude: ${currItem.accidentLocationLongitude}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Created At: ${currItem.accidentDate}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      "Accident Injuries: ${currItem.numInjuries} total",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                 ]))));
   }
 }

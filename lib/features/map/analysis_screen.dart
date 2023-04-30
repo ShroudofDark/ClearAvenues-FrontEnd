@@ -36,8 +36,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
     final user = ref.watch(userProvider);
     final heatmapPoints = ref.watch(heatmapPointsProvider);
     final associationMarkers = ref.watch(associationMarkerProvider(context));
-    //TODO add ! back in front
-    if ((user.accountType == null || user.accountType == "standard")) {
+    if (!(user.accountType == null || user.accountType == "standard")) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Analysis Map'),

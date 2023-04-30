@@ -20,19 +20,21 @@ class MyDateTimePickerTheme extends DateTimePickerTheme {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        // Remove both this DatePicker and the AlertDialog from before
-                        context.pop();
-                        context.pop();
+                    Consumer(
+                      builder: (context, ref, child) {
+                        return TextButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
                       },
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
                     const Text(
                       'Select Reminder Time',
