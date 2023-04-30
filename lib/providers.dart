@@ -60,7 +60,24 @@ class UserNotifier extends Notifier<User> {
         });
     var response = await client.post(url);
     if (response.statusCode == 200) {
-      return true;
+
+      //Intensity Score Update, was having difficulty getting this to update
+      //Via backend even when I wrote my own command, so going to call one Matt made
+      //Just so we have something that works
+      var intensityUrl = Uri(
+          scheme: 'http',
+          host: Constants.serverIP,
+          port: Constants.serverPort,
+          path: '/locations/update/$locationId',
+      );
+      response = await client.post(intensityUrl);
+      if(response.statusCode == 200) {
+        return true;
+      }
+      if(response.statusCode == 200) {
+        debugPrint("Didn't update intensity");
+        return true;
+      }
     }
     debugPrint("Error submitting report: ${response.body}");
     return false;
