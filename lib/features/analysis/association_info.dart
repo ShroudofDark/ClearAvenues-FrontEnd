@@ -1,5 +1,6 @@
 import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/providers.dart';
+import 'package:clear_avenues/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -89,6 +90,7 @@ class _AssociationInfoScreen extends ConsumerState<AssociationInfoScreen> {
                       itemCount: reports?.length ?? 0,
                       itemBuilder: (context, index) {
                         final currItem = reports![index];
+                        String convertedType  = convertType(currItem.reportType);
                         return Container(
                           color: Colors.green,
                           child: ExpansionTile(
@@ -97,7 +99,7 @@ class _AssociationInfoScreen extends ConsumerState<AssociationInfoScreen> {
                             collapsedIconColor: Colors.white,
                             collapsedTextColor: Colors.white,
                             title: Text(
-                              "Report ${currItem.reportId} [${currItem.reportType}]",
+                              "Report ${currItem.reportId} [$convertedType]",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,

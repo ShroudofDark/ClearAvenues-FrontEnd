@@ -1,3 +1,4 @@
+import 'package:clear_avenues/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,13 +25,13 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
     LatLng coords = LatLng(widget.report.reportLocationLatitude,
         widget.report.reportLocationLongitude);
 
+    String convertedString = convertType(widget.report.reportType);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Report Info'),
         ),
         body: Center(
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24.0),
@@ -47,7 +48,7 @@ class _ReportInfoScreenState extends State<ReportInfoScreen> {
                         ),
                         children: [
                           TextSpan(
-                            text: "${widget.report.reportType}\n",
+                            text: "$convertedString\n",
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 16,

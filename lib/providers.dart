@@ -5,6 +5,7 @@ import 'package:clear_avenues/features/analysis/AnalysisService.dart';
 import 'package:clear_avenues/models/Accident.dart';
 import 'package:clear_avenues/models/Association.dart';
 import 'package:clear_avenues/models/User.dart';
+import 'package:clear_avenues/utility/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -129,24 +130,7 @@ Future<BitmapDescriptor> getMapMarker(String? reportType) async {
 }
 
 //Converts the report types into readable versions
-String convertType(String? reportType) {
-  switch (reportType) {
-    case "missing_signage":
-      return "Missing Sign";
-    case "debris":
-      return "Debris";
-    case "flooding":
-      return "Flooding";
-    case "pothole":
-      return "Pothole";
-    case "obstructed_sign":
-      return "Obstructed Sign";
-    case "vehicle_accident":
-      return "Vehicular Related";
-    default:
-      return "Other";
-  }
-}
+
 
 final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
   while (true) {
