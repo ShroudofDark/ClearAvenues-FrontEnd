@@ -132,7 +132,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     ),
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                          target: coords, zoom: 20.0, tilt: 0, bearing: 0),
+                          target: coords, zoom: 18.0, tilt: 0, bearing: 0),
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
 

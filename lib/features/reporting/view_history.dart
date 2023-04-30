@@ -24,11 +24,10 @@ class _ViewHistoryState extends ConsumerState<ViewHistory> {
                   final reportType = reports[index].reportType;
                   return ListTile(
                     tileColor: reports[index].reportStatus == "submitted"
-                        ? Colors.red
-                        : Colors.green,
+                        ? Colors.green
+                        : Colors.red,
                     title: Text(reportType),
                     subtitle: Text(comment),
-                    trailing: const Icon(Icons.more_vert),
                     isThreeLine: true,
                   );
                 },

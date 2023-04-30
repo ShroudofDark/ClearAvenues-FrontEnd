@@ -36,7 +36,7 @@ class Report {
     reportLocationLongitude = json['reportLocationLongitude'];
     reportType = json['reportType'];
     reportStatus = json['status'];
-    reportImage = json['imageString'];
+    reportImage = json['image'];
   }
 
   Map<String, dynamic> toJson() {

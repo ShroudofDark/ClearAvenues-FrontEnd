@@ -74,7 +74,7 @@ class UserNotifier extends Notifier<User> {
         scheme: 'http',
         host: Constants.serverIP,
         port: Constants.serverPort,
-        path: '/locations/update/$locationId',
+        path: '/locations/$locationId',
       );
       response = await client.post(intensityUrl);
       if (response.statusCode == 200) {
@@ -98,6 +98,8 @@ final markersProvider =
       const ImageConfiguration(), "assets/images/icon.png");
   final reportList = ref.watch(allReportsProvider);
   var reports = reportList.value;
+  reports =
+      reports?.where((report) => report.reportStatus == "submitted").toList();
   var markers = reports?.map((markerInfo) {
     String readableReportType = convertType(markerInfo.reportType);
 
@@ -135,7 +137,6 @@ Future<BitmapDescriptor> getMapMarker(String? reportType) async {
 }
 
 //Converts the report types into readable versions
-
 
 final allReportsProvider = StreamProvider<List<Report>>((ref) async* {
   while (true) {
