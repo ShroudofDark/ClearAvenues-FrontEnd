@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:clear_avenues/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../models/Report.dart';
+import '../../utility/utility.dart';
 
 class ReportInfoScreen extends ConsumerStatefulWidget {
   final Report report;
@@ -27,6 +30,7 @@ class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
     LatLng coords = LatLng(widget.report.reportLocationLatitude,
         widget.report.reportLocationLongitude);
 
+    String convertedString = convertType(widget.report.reportType);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Report Info'),
@@ -50,7 +54,7 @@ class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
                         ),
                         children: [
                           TextSpan(
-                            text: "${widget.report.reportType}\n",
+                            text: "$convertedString\n",
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,
                               fontSize: 16,
@@ -227,6 +231,8 @@ class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
                 ],
               ),
               const SizedBox(height: 24.0),
+              if (widget.report.reportImage != null)
+                Image.memory(base64Decode(widget.report.reportImage!)),
               RichText(
                 text: TextSpan(
                   text: "Report Description: \n",
@@ -265,12 +271,12 @@ class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
               ]),
               user.accountType == "municipality"
                   ? ElevatedButton(
-                      onPressed: () {}, child: const Text("Close Report"))
+                      onPressed: _onClosePressed(),
+                      child: const Text("Close Report"))
                   : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       ElevatedButton(
                         onPressed: () {
-                          debugPrint("yes");
-                          // TODO send to request database
+                          _onVotePressed(true);
                         },
                         child: const Text('Yes'),
                       ),
@@ -278,13 +284,12 @@ class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
                           width: 16), // Add some spacing between the buttons
                       ElevatedButton(
                         onPressed: () {
-                          debugPrint("no");
-                          // TODO send to request database
+                          _onVotePressed(false);
                         },
                         child: const Text('no'),
                       ),
                     ]),
-            ], //column children
+            ], //Column children
           ),
         ));
   }
@@ -298,5 +303,32 @@ class _ReportInfoScreenState extends ConsumerState<ReportInfoScreen> {
           '${place.street}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}';
     });
     return address;
+  }
+
+  void _onVotePressed(bool value) async {
+    if (ref.read(userProvider).email == null) {
+      showMySnackbar(context, "You must sign in first!");
+      return;
+    }
+    var success = await widget.report.vote(value);
+    if (context.mounted) {
+      success
+          ? showMySnackbar(context, "Vote successful.")
+          : showMySnackbar(context, "Error voting on report.");
+    }
+  }
+
+  _onClosePressed() async {
+    if (ref.read(userProvider).email == null) {
+      showMySnackbar(context, "You must sign in first!");
+      return;
+    }
+    var success = await widget.report.resolve(ref.read(userProvider).email!);
+
+    if (context.mounted) {
+      success
+          ? showMySnackbar(context, "Vote successful.")
+          : showMySnackbar(context, "Error resolving report.");
+    }
   }
 }

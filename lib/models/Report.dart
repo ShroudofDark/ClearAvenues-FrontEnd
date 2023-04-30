@@ -1,3 +1,7 @@
+import 'package:clear_avenues/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+
 enum ReportStatus { submitted, closed }
 
 class Report {
@@ -10,7 +14,8 @@ class Report {
   String? reportStatus;
   late double reportLocationLatitude;
   late double reportLocationLongitude;
-
+  bool? voted;
+  String? reportImage;
   Report(
       {required this.reportId,
       required this.reportComment,
@@ -31,6 +36,7 @@ class Report {
     reportLocationLongitude = json['reportLocationLongitude'];
     reportType = json['reportType'];
     reportStatus = json['status'];
+    reportImage = json['imageString'];
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +51,42 @@ class Report {
     data['reportType'] = reportType;
     data['status'] = reportStatus;
     return data;
+  }
+
+  Future<bool> resolve(String email) async {
+    var response = await get(
+      Uri(
+          scheme: "http",
+          host: Constants.serverIP,
+          port: Constants.serverPort,
+          path: "/reports/$reportId/resolve",
+          queryParameters: {"resolvedBy": email}),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      debugPrint(
+          "Error resolving report. HTTP Status Code: ${response.statusCode}");
+      return false;
+    }
+  }
+
+  Future<bool> vote(bool vote) async {
+    var response = await get(
+      Uri(
+        scheme: "http",
+        host: Constants.serverIP,
+        port: Constants.serverPort,
+        path: "/reports/$reportId/vote",
+        queryParameters: {"vote": vote.toString()},
+      ),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      debugPrint("HTTP error voting on report: ${response.statusCode}");
+      return false;
+    }
   }
 
   @override

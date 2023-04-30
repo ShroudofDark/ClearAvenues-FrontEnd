@@ -1,14 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:convert';
+
 import 'package:clear_avenues/providers.dart';
 import 'package:clear_avenues/utility/utility.dart';
 import 'package:clear_avenues/widgets/my_scaffold.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 ImagePicker picker = ImagePicker();
@@ -45,28 +47,23 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         Image.asset("assets/images/roadkill.png")),
     UnsafeCondition("Animal Crossing Road", "animal_crossing",
         Image.asset("assets/images/animal_crossing.png")),
-    UnsafeCondition("Blind Turn", "blind_turn",
-        Image.asset("assets/images/blind.png")),
+    UnsafeCondition(
+        "Blind Turn", "blind_turn", Image.asset("assets/images/blind.png")),
     UnsafeCondition("Damaged Sign", "damaged_sign",
         Image.asset("assets/images/damage_sign.png")),
-    UnsafeCondition("Debris", "debris",
-        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Debris", "debris", Image.asset("assets/images/icon.png")),
     UnsafeCondition("Fallen Tree", "fallen_tree",
         Image.asset("assets/images/Fallen_tree.png")),
-    UnsafeCondition("Flooding", "flooding",
-        Image.asset("assets/images/icon.png")),
-    UnsafeCondition("Fog", "fog",
-        Image.asset("assets/images/icon.png")),
-    UnsafeCondition("Hail", "hail",
-        Image.asset("assets/images/icon.png")),
-    UnsafeCondition("Ice", "ice",
-        Image.asset("assets/images/icy.png")),
-    UnsafeCondition("Leaves", "leaves",
-        Image.asset("assets/images/icon.png")),
+    UnsafeCondition(
+        "Flooding", "flooding", Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Fog", "fog", Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Hail", "hail", Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Ice", "ice", Image.asset("assets/images/icy.png")),
+    UnsafeCondition("Leaves", "leaves", Image.asset("assets/images/icon.png")),
     UnsafeCondition("Missing Sign", "missing_signage",
         Image.asset("assets/images/missing_sign.png")),
-    UnsafeCondition("Pothole", "pothole",
-        Image.asset("assets/images/Pothole.png")),
+    UnsafeCondition(
+        "Pothole", "pothole", Image.asset("assets/images/Pothole.png")),
     UnsafeCondition("Obfuscation - Rain", "blinding_rain",
         Image.asset("assets/images/icon.png")),
     UnsafeCondition("Obfuscation - Sun", "blinding_sun",
@@ -91,8 +88,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         Image.asset("assets/images/icon.png")),
     UnsafeCondition("Vehicle Accident", "vehicle_accident",
         Image.asset("assets/images/icon.png")),
-    UnsafeCondition("Other", "other",
-        Image.asset("assets/images/icon.png")),
+    UnsafeCondition("Other", "other", Image.asset("assets/images/icon.png")),
   ];
 
   List<XFile> imageFileList = []; //For multi-images + gallery
@@ -346,6 +342,15 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   //Submit the information of the report and leave the report screen
   void _onPressSubmit(
       List<XFile> imageFileList, UnsafeCondition? selectedCondition) async {
+    List<String> encodedImages = [];
+    if (imageFileList.isNotEmpty) {
+      for (var image in imageFileList) {
+        Uint8List bytes = await image.readAsBytes();
+        String convertedImage = base64Encode(bytes);
+        encodedImages.add(convertedImage);
+      }
+    }
+    var image = encodedImages.firstOrNull;
     if (selectedCondition == null) {
       showMySnackbar(context, "Please Select Unsafe Condition Type");
     } else {
@@ -354,7 +359,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
           description.text,
           widget.coordinates.latitude.toString(),
           widget.coordinates.longitude.toString(),
-          postalCode!);
+          postalCode!,
+          image);
       if (success && context.mounted) {
         showMySnackbar(context, "Submission successful.");
       } else if (context.mounted) {
@@ -364,15 +370,6 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
 
     //Unless there is change in back end, only first image in list will be submitted.
     //Kept it this way to show that the code is there to future proof it.
-
-    List<String> encodedImages = [];
-    if (imageFileList.isNotEmpty) {
-      for (var image in imageFileList) {
-        Uint8List bytes = await image.readAsBytes();
-        String convertedImage = base64Encode(bytes);
-        encodedImages.add(convertedImage);
-      }
-    }
 
     cheatUpdate.value = 0;
 

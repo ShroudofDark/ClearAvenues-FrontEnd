@@ -14,7 +14,7 @@ class NotificationService extends ProviderObserver {
     Object? newValue,
     ProviderContainer container,
   ) async {
-    debugPrint("Provider updated: ${container.read(provider)}");
+    // debugPrint("Provider updated: ${container.read(provider)}");
     // If a user's report receives a status update
     if (provider == userReportProvider) {
       if (previousValue! is AsyncData<List<Report>> ||
