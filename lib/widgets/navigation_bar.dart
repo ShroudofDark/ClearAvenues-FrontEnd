@@ -49,10 +49,10 @@ class NavBar extends ConsumerWidget {
                    * Learned how to center the avatar figure by user Maikzen
                    */
                   currentAccountPictureSize: Size(drawerWidth *.97, 135),
-                  currentAccountPicture: Center(
+                  currentAccountPicture: const Center(
                       child: CircleAvatar(
                         radius: 70,
-                        child: Text(user.name ?? ""),
+                        child: Icon(Icons.person, size: 100),
                       )
                   ),
                   accountName: Row(
@@ -72,8 +72,7 @@ class NavBar extends ConsumerWidget {
                     ],
                   ),
                   // Required for UserAccountsDrawerHeader, but can set null
-                  accountEmail: Text(user.email ?? "")
-
+                  accountEmail: null
                 ),
               ),
               ListTile(

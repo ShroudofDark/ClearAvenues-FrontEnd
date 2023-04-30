@@ -1,28 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers.dart';
 
-class ViewOrganization extends StatefulWidget {
-  const ViewOrganization({Key? key, required this.loggedIn}) : super(key: key);
-
-  final bool loggedIn;
+class ViewOrganization extends ConsumerStatefulWidget {
+  const ViewOrganization({Key? key}) : super(key: key);
 
   @override
-  State<ViewOrganization> createState() => _ViewOrganizationState();
+  ConsumerState<ViewOrganization> createState() => _ViewOrganizationState();
 }
 
-class _ViewOrganizationState extends State<ViewOrganization> {
-  final String name = "City of Norfolk";
-  final String phone = "123-456-7890";
-  final String email = "contact@norfolkva.org\n\n";
-
-  final String nameIn = "Federal Highway Administration";
-  final String phoneIn = "757-6833192";
-  final String emailIn = "fhwaHelp@us.gov";
-
+class _ViewOrganizationState extends ConsumerState<ViewOrganization> {
   final List<String> invitedUsers = [];
   final TextEditingController _emailController = TextEditingController();
   String _errorMessage = "";
-
-
 
   void _inviteUser() {
     String email = _emailController.text.trim();
@@ -42,103 +32,88 @@ class _ViewOrganizationState extends State<ViewOrganization> {
     }
   }
 
+  ///Simplified Version of Intended Use of This Screen
+  ///Real-World Product would have a display for "invited users"
+  ///And allow actual invites to be issued
   Widget _buildOrganizationInfo() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24.0,
+    final user = ref.watch(userProvider);
+    if (!(user.accountType == null || user.accountType == "standard")) {
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${user.name}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24.0,
+              ),
             ),
-          ),
-          const SizedBox(height: 16.0),
-          Text(
-            "Phone: $phone",
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            "Email: $email",
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 16.0),
-
-
-          Text(
-            nameIn,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24.0,
+            const SizedBox(height: 8.0),
+            Text(
+              "Email: ${user.email}",
+              style: const TextStyle(fontSize: 18.0),
             ),
-      ),
-          const SizedBox(height: 16.0),
-          Text (
-            "Phone: $phoneIn",
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            "Email: $emailIn",
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 16.0),
-          const Text(
-            "Invited Users:",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
+            const SizedBox(height: 16.0),
+            const Text(
+              "Invited Users:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
             ),
-          ),
-          const SizedBox(height: 8.0),
-          Column(
-            children: invitedUsers
-                .map(
-                  (user) => ListTile(
-                title: Text(user),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      invitedUsers.remove(user);
-                    });
-                  },
+            const SizedBox(height: 8.0),
+            Column(
+              children: invitedUsers
+                  .map(
+                    (user) => ListTile(
+                  title: Text(user),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        invitedUsers.remove(user);
+                      });
+                    },
+                  ),
                 ),
-              ),
-            )
-                .toList(),
-          ),
-          const SizedBox(height: 16.0),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: "Enter email address to invite",
-              errorText: _errorMessage,
+              ).toList(),
             ),
-          ),
-          const SizedBox(height: 16.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: _inviteUser,
-                child: const Text("Invite"),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: "Enter email address to invite",
+                errorText: _errorMessage,
               ),
-            ],
+            ),
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: _inviteUser,
+                  child: const Text("Invite"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+    else {
+      return const Center(child: Text(
+          "Please Login to a Organization or Institute account to view.",
+          style: TextStyle(
+            fontSize: 24,
           ),
-        ],
-      ),
-    );
+          textAlign: TextAlign.center,
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.loggedIn) {
-      return const Center(child: Text("Please Login to View"));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Organization"),

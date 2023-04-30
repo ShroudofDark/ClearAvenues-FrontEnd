@@ -41,7 +41,7 @@ var routes = [
       builder: (context, state) => const AccountInfoScreen()),
   GoRoute(
       path: '/view_organization',
-      builder: (context, state) => const ViewOrganization(loggedIn: true)),
+      builder: (context, state) => const ViewOrganization()),
   GoRoute(
       path: '/analysis', builder: (context, state) => const AnalysisScreen()),
   GoRoute(
