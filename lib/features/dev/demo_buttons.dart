@@ -187,6 +187,29 @@ class _DemoButtonScreen extends State<DemoButtonScreen> {
               //TODO Quick Button To Swap Account Types (So We Don't Have To Relogin)
 
               //TODO Quick Button To Add A Bunch of Fake Reports around "current location"
+
+              FilledButton(
+                onPressed: () {
+                  forceUpdateAllIntensities();
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.greenAccent;
+                        }
+                        return Colors.green;
+                      }),
+                ),
+                child: const Text(
+                  "Force Intensities to Update",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
