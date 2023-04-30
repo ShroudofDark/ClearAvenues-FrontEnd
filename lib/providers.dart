@@ -245,7 +245,7 @@ final heatmapPointsProvider = FutureProvider<List<WeightedLatLng>>((ref) async {
 final associationMarkerProvider =
 FutureProvider.family<Iterable<Marker>, BuildContext>((ref, context) async {
   final BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(), "assets/images/icon.png");
+      const ImageConfiguration(), "assets/images/AssociationReport.png");
   final associationList = ref.watch(allAssociationsProviderRef);
   var associations = associationList.value;
   var markers = associations?.map((markerInfo) {
