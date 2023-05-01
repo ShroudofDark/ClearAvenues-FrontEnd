@@ -74,7 +74,7 @@ class UserNotifier extends Notifier<User> {
         scheme: 'http',
         host: Constants.serverIP,
         port: Constants.serverPort,
-        path: '/locations/$locationId',
+        path: '/locations/update/$locationId',
       );
       response = await client.post(intensityUrl);
       if (response.statusCode == 200) {
