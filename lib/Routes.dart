@@ -22,7 +22,7 @@ import 'features/analysis/association_info.dart';
 import 'models/Report.dart';
 
 var routes = [
-  GoRoute(path: '/', builder: (context, state) => const DevScreen()),
+  GoRoute(path: '/', builder: (context, state) => const MapScreen()),
   GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
   GoRoute(
       path: '/register', builder: (context, state) => const RegisterScreen()),

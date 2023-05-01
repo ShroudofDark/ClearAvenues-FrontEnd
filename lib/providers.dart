@@ -237,7 +237,7 @@ final heatmapPointsProvider = FutureProvider<List<WeightedLatLng>>((ref) async {
             pointsList.add(WeightedLatLng(
                 LatLng(report.reportLocationLatitude,
                     report.reportLocationLongitude),
-                weight: (location.intensity.toDouble() / 3)));
+                weight: (location.intensity.toDouble())));
             //weight: (1.0))); //Debugging weight
           }
         }
