@@ -12,7 +12,7 @@ Clear Avenues is a smart device application that seeks to improve roads and safe
 
 The application will no longer run as the database that stored our information no longer runs and the google maps API key has been revoked. A video of the prototype in action will be provided via the final presentation of our class.
 
-Presentation: [Being Processed]
+Presentation: https://youtu.be/UqSgKUyA1GQ
 
 # Members
 ## Afnan Saed
